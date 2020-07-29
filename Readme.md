@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Элла Сидорова](https://up.htmlacademy.ru/ecmascript/12/user/147338).
-* Наставник: `Неизвестно`.
+* Наставник: [Евгений Карпов](https://up.htmlacademy.ru/ecmascript/12/user/70583).
 
 ---
 
