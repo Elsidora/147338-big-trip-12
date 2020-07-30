@@ -7,22 +7,22 @@ const mainElement = pageBodyElement.querySelector(`.page-main`);
 const tripMainElement = headerElement.querySelector(`.trip-main`);
 const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = mainElement.querySelector(`.trip-events`);
-const [, secondElement] = tripControlsElement.querySelectorAll(`h2`);
+
 
 const createSiteMenuTemplate = () => {
   return (
-    `<nav class="trip-controls__trip-tabs  trip-tabs">
-    <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
-    <a class="trip-tabs__btn" href="#">Stats</a>
-  </nav>`
+    `<h2 class="visually-hidden">Switch trip view</h2>
+    <nav class="trip-controls__trip-tabs  trip-tabs">
+      <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
+      <a class="trip-tabs__btn" href="#">Stats</a>
+    </nav>`
   );
 };
 
-secondElement.insertAdjacentHTML(`beforebegin`, createSiteMenuTemplate());
-
 const createFilterTemplate = () => {
   return (
-    `<form class="trip-filters" action="#" method="get">
+    `<h2 class="visually-hidden">Filter events</h2>
+    <form class="trip-filters" action="#" method="get">
     <div class="trip-filters__filter">
       <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
       <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
@@ -132,6 +132,10 @@ const createPointTemplate = () => {
   );
 };
 
+const getTripEventsListContainer = () => {
+  const tripEventsListElemennt = tripEventsElement.querySelector(`.trip-events__list`);
+  return tripEventsListElemennt;
+};
 const createFormEditTemplate = () => {
   return (
     `<li class="trip-events__item">
@@ -311,48 +315,31 @@ const createFormEditTemplate = () => {
 };
 const createTripInfoTemplate = () => {
   return (
-    `<section class="trip-main__trip-info  trip-info"></section>`
+    `<section class="trip-main__trip-info  trip-info">
+    <div class="trip-info__main">
+      <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+      <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
+    </div>
+    <p class="trip-info__cost">
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+    </p>
+    </section>`
   );
 };
 
-const createRouteTemplate = () => {
-  return (
-    `<div class="trip-info__main">
-    <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
-
-    <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
-  </div>`
-  );
+const renderHtmlElement = (container, markupString, position) => {
+  container.insertAdjacentHTML(position, markupString);
 };
 
-const createCostTemplate = () => {
-  return (
-    `<p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
-  </p>`
-  );
-};
+renderHtmlElement(tripMainElement, createTripInfoTemplate(), `afterbegin`);
+renderHtmlElement(tripControlsElement, createSiteMenuTemplate(), `beforeend`);
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-render(tripMainElement, createTripInfoTemplate(), `afterbegin`);
-
-const tripInfoElement = tripMainElement.querySelector(`.trip-info`);
-
-render(tripInfoElement, createRouteTemplate(), `beforeend`);
-render(tripInfoElement, createCostTemplate(), `beforeend`);
-
-render(tripControlsElement, createFilterTemplate(), `beforeend`);
-render(tripEventsElement, createSortingTemplate(), `beforeend`);
-render(tripEventsElement, createTripDaysContent(), `beforeend`);
-
-const tripEventsListElemennt = tripEventsElement.querySelector(`.trip-events__list`);
-
-render(tripEventsListElemennt, createFormEditTemplate(), `beforeend`);
+renderHtmlElement(tripControlsElement, createFilterTemplate(), `beforeend`);
+renderHtmlElement(tripEventsElement, createSortingTemplate(), `beforeend`);
+renderHtmlElement(tripEventsElement, createTripDaysContent(), `beforeend`);
+renderHtmlElement(getTripEventsListContainer(), createFormEditTemplate(), `beforeend`);
 for (let i = 0; i < POINT_COUNT; i += 1) {
-  render(tripEventsListElemennt, createPointTemplate(), `beforeend`);
+  renderHtmlElement(getTripEventsListContainer(), createPointTemplate(), `beforeend`);
 }
 
 
