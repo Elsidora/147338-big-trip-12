@@ -5,8 +5,7 @@ import {createTripDaysTemplate} from "./view/trip-days.js";
 import {createPointTemplate} from "./view/point.js";
 import {createFormEditTemplate} from "./view/form-edit.js";
 import {createTripInfoTemplate} from "./view/trip-info.js";
-import {renderTripEventsList} from "./view/trip-list.js";
-import {renderHtmlElement} from "./view/render.js";
+import {renderHtmlElement} from "./util.js";
 
 
 const POINT_COUNT = 3;
@@ -18,9 +17,17 @@ const tripMainElement = headerElement.querySelector(`.trip-main`);
 const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = mainElement.querySelector(`.trip-events`);
 
+const renderTripEventsList = () => {
+  const tripEventsListElement = tripEventsElement.querySelector(`.trip-events__list`);
+  renderHtmlElement(tripEventsListElement, createFormEditTemplate(), `beforeend`);
+  for (let i = 0; i < POINT_COUNT; i += 1) {
+    renderHtmlElement(tripEventsListElement, createPointTemplate(), `beforeend`);
+  }
+};
+
 renderHtmlElement(tripMainElement, createTripInfoTemplate(), `afterbegin`);
 renderHtmlElement(tripControlsElement, createSiteMenuTemplate(), `beforeend`);
 renderHtmlElement(tripControlsElement, createFilterTemplate(), `beforeend`);
 renderHtmlElement(tripEventsElement, createSortingTemplate(), `beforeend`);
 renderHtmlElement(tripEventsElement, createTripDaysTemplate(), `beforeend`);
-renderTripEventsList(POINT_COUNT, tripEventsElement, renderHtmlElement, createFormEditTemplate, createPointTemplate);
+renderTripEventsList();
