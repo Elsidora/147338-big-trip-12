@@ -1,14 +1,16 @@
-import {createSiteMenuTemplate} from "./view/site-menu.js";
-import {createFilterTemplate} from "./view/filter.js";
-import {createSortingTemplate} from "./view/sorting.js";
-import {createTripDaysTemplate} from "./view/trip-days.js";
-import {createPointTemplate} from "./view/point.js";
-import {createFormEditTemplate} from "./view/form-edit.js";
-import {createTripInfoTemplate} from "./view/trip-info.js";
-import {renderHtmlElement} from "./util.js";
+import {createSiteMenuTemplate} from "./view/site-menu";
+import {createFilterTemplate} from "./view/filter";
+import {createSortingTemplate} from "./view/sorting";
+import {createTripDaysTemplate} from "./view/trip-days";
+import {createPointTemplate} from "./view/point";
+import {createFormEditTemplate} from "./view/form-edit";
+import {createTripInfoTemplate} from "./view/trip-info";
+import {renderHtmlElement} from "./util";
+import {generateRoutePoint} from './mock/point';
 
+const POINT_COUNT = 8;
 
-const POINT_COUNT = 3;
+const points = new Array(POINT_COUNT).fill().map(generateRoutePoint);
 
 const pageBodyElement = document.querySelector(`.page-body`);
 const headerElement = pageBodyElement.querySelector(`.page-header`);
@@ -19,9 +21,8 @@ const tripEventsElement = mainElement.querySelector(`.trip-events`);
 
 const renderTripEventsList = () => {
   const tripEventsListElement = tripEventsElement.querySelector(`.trip-events__list`);
-  renderHtmlElement(tripEventsListElement, createFormEditTemplate(), `beforeend`);
   for (let i = 0; i < POINT_COUNT; i += 1) {
-    renderHtmlElement(tripEventsListElement, createPointTemplate(), `beforeend`);
+    renderHtmlElement(tripEventsListElement, createPointTemplate(points[i]), `beforeend`);
   }
 };
 
@@ -29,5 +30,6 @@ renderHtmlElement(tripMainElement, createTripInfoTemplate(), `afterbegin`);
 renderHtmlElement(tripControlsElement, createSiteMenuTemplate(), `beforeend`);
 renderHtmlElement(tripControlsElement, createFilterTemplate(), `beforeend`);
 renderHtmlElement(tripEventsElement, createSortingTemplate(), `beforeend`);
+renderHtmlElement(tripEventsElement, createFormEditTemplate(), `beforeend`);
 renderHtmlElement(tripEventsElement, createTripDaysTemplate(), `beforeend`);
 renderTripEventsList();
