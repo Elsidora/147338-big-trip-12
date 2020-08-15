@@ -1,10 +1,13 @@
-export const createTripDaysTemplate = () => {
+import {humanizeEventDate} from '../util';
+export const createTripDaysTemplate = (startTrip) => {
+  const option = {day: `numeric`, month: `short`};
+  const tripStartDate = humanizeEventDate(startTrip, option);
   return (
     `<ul class="trip-days">
         <li class="trip-days__item  day">
           <div class="day__info">
             <span class="day__counter">1</span>
-            <time class="day__date" datetime="2019-03-18">MAR 18</time>
+            <time class="day__date" datetime="2019-03-18">${tripStartDate}</time>
           </div>
 
           <ul class="trip-events__list"></ul>

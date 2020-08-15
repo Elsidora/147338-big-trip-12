@@ -3,11 +3,13 @@ export const renderHtmlElement = (container, markupString, position) => {
 };
 
 export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
+  const min = Math.ceil(Math.min(a, b));
+  const max = Math.floor(Math.max(a, b));
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
+  return Math.floor(min + Math.random() * (max - min + 1));
 };
+
+export const getRandomBoolean = () => Math.random() >= 0.5;
 
 export const shuffle = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -20,5 +22,19 @@ export const shuffle = (array) => {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
+};
+
+export const getRandomDate = (maxMinuteOffset, dateFrom = null) => {
+  const millisecOffset = 1000 * 60 * maxMinuteOffset;
+  const randomTimeOffset = getRandomInteger(0, +millisecOffset); // рандомное смещение времени
+  const startTime = dateFrom !== null
+    ? dateFrom.getTime()
+    : new Date().getTime();
+
+  return new Date(startTime + randomTimeOffset);
+};
+
+export const humanizeEventDate = (dateObject) => {
+  return dateObject.toLocaleString(`en-US`, {day: `numeric`, month: `short`});
 };
 

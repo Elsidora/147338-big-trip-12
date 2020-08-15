@@ -1,5 +1,5 @@
-import {PRICE} from "../const";
-import {getRandomInteger, shuffle} from "../util";
+import {PRICE, CITIES} from "../const";
+import {getRandomInteger, shuffle, getRandomBoolean, getRandomDate} from "../util";
 
 const Count = {
   MIN: 1,
@@ -7,217 +7,249 @@ const Count = {
 };
 
 const generateCityName = () => {
-  const cities = [
-    `Paris`,
-    `London`,
-    `Minsk`,
-    `Calcutta`,
-    `Geneva`,
-    `Deli`,
-    `Venezia`,
-    `Rim`,
-    `Phuket`
-  ];
-  const randomIndex = getRandomInteger(0, cities.length - 1);
-
-  return cities[randomIndex];
+  return CITIES[getRandomInteger(0, CITIES.length - 1)];
 };
 
 const offers = {
   Taxi: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
   ],
   Train: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
   ],
   Ship: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
   ],
   Transport: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
   ],
   Drive: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
   ],
   Flight: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
   ],
   [`Check-in`]: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
   ],
   Sightseeing: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
   ],
   Restaurant: [
     {
+      id: `luggage`,
       title: `Add luggage`,
       price: 30,
     },
     {
+      id: `comfort`,
       title: `Switch to comfort class`,
       price: 100,
     },
     {
+      id: `meal`,
       title: `Add meal`,
       price: 15,
     },
     {
+      id: `seats`,
       title: `Choose seats`,
       price: 5,
     },
     {
+      id: `train`,
       title: `Travel by train`,
       price: 30,
     },
@@ -235,15 +267,66 @@ const getRandomPrice = () => {
   return PRICE[randomIndex];
 };
 
+/*
+Метод getDate() возвращает
+день месяца указанной даты по местному времени.
+
+Метод Date.parse() разбирает строковое представление
+даты и возвращает количество миллисекунд,
+прошедших с 1 января 1970 года 00:00:00 по UTC.
+
+Метод setDate() устанавливает день месяца указанной
+даты по местному времени.
+
+Метод setHours() устанавливает часы указанной даты
+по местному времени и возвращает количество миллисекунд,
+прошедших с 1 января 1970 00:00:00 по UTC до времени,
+представляемого обновлённым экземпляром Date.
+*/
+// const maxStartDaysGap = 4;
+// const maxDurationEventMinutes = 135;
+
+const generateFromDate = () => {
+
+  const maxDaysGap = 7;
+  const daysGap = getRandomInteger(0, maxDaysGap);
+  const currentDate = new Date();
+
+  currentDate.setDate(currentDate.getDate() - daysGap);
+  currentDate.setHours(currentDate.getHours() - daysGap);
+  currentDate.setMinutes(currentDate.getMinutes() - daysGap);
+
+  return currentDate;
+};
+
+const generateToDate = () => {
+
+  const maxDaysGap = 4;
+  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap) / 2;
+  const currentDate = new Date();
+
+  currentDate.setDate(currentDate.getDate() + daysGap);
+  currentDate.setHours(currentDate.getHours() + daysGap);
+  currentDate.setMinutes(currentDate.getMinutes() + daysGap);
+
+  return currentDate;
+};
 
 export const generateRoutePoint = () => {
   const types = Object.keys(offers);
   const type = types[getRandomInteger(0, types.length - 1)];
   const options = shuffle(offers[type].slice());
-  const additionalOptions = options.slice(0, getRandomInteger(0, options.length - 1));
+  const additionalOptions = options.slice(0, getRandomInteger(0, options.length));
   const sentence = shuffle(text.split(`. `).slice());
-  const description = sentence.slice(0, getRandomInteger(1, sentence.length - 1)).join(`. `);
+  const description = sentence.slice(0, getRandomInteger(1, sentence.length)).join(`. `);
+
   const pictures = new Array(getRandomInteger(Count.MIN, Count.MAX)).fill().map(getPictureSrc);
+  // const dateFrom = getRandomDate(maxStartDaysGap * 24 * 60);
+  // const startTime = generateStartDate();
+  // const endTime = generateEndDate();
+  const dateFrom = generateFromDate();
+  const dateTo = generateToDate();
+
 
   return {
     type,
@@ -254,6 +337,9 @@ export const generateRoutePoint = () => {
       pictures,
     },
     price: getRandomPrice(),
+    dateFrom,
+    dateTo,
+    isFavorite: getRandomBoolean(),
   };
 };
 
