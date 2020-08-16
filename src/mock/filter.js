@@ -1,4 +1,4 @@
-import {isPointFutureExpiringToday, isPointPastExpiringToday} from "./util";
+import {isPointFutureExpiringToday, isPointPastExpiringToday} from "../util";
 
 const pointToFilterMap = {
   everything: (points) => points.slice(),

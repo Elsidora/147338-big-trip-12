@@ -7,11 +7,13 @@ import {createPointTemplate} from "./view/point";
 import {createFormEditTemplate} from "./view/form-edit";
 import {createTripInfoTemplate} from "./view/trip-info";
 import {renderHtmlElement} from "./util";
-import {generateRoutePoint} from './mock/point';
+import {generateRoutePoint} from "./mock/point";
+import {generateFilter} from "./mock/filter";
 
 const POINT_COUNT = 8;
 
 const points = new Array(POINT_COUNT).fill().map(generateRoutePoint);
+const filters = generateFilter(points);
 
 const tripStartDate = points[0].dateFrom;
 const tripEndDate = points[points.length - 1].dateTo;
@@ -34,7 +36,7 @@ const renderTripEventsList = () => {
 
 renderHtmlElement(tripMainElement, createTripInfoTemplate(tripStartDate, tripEndDate), `afterbegin`);
 renderHtmlElement(tripControlsElement, createSiteMenuTemplate(), `beforeend`);
-renderHtmlElement(tripControlsElement, createFilterTemplate(), `beforeend`);
+renderHtmlElement(tripControlsElement, createFilterTemplate(filters), `beforeend`);
 renderHtmlElement(tripEventsElement, createSortingTemplate(), `beforeend`);
 renderHtmlElement(tripEventsElement, createFormEditTemplate(points[0]), `beforeend`);
 renderHtmlElement(tripEventsElement, createTripDaysTemplate(tripStartDate), `beforeend`);
