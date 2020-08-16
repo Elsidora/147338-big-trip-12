@@ -1,4 +1,4 @@
-import moment from 'moment';
+// import moment from 'moment';
 import {ACTIVITY} from "../const";
 import {shuffle} from '../util';
 
@@ -18,66 +18,34 @@ const getTypeInOrTypeTo = (type) => {
   return (ACTIVITY.includes(type.toLowerCase()) ? `${type} in` : `${type} to`);
 };
 
-/*
-// функция выставления впереди нуля
-const addZero = (digit) => {
-  return digit < 10
-    ? `0` + digit
-    : digit;
+const getFormatISO = (objectTime) => {
+  return objectTime.toISOString().slice(0, objectTime.toISOString().lastIndexOf(`:`));
 };
-
-const humanizeDuration = (finishDate, startDate) => {
-  const startMoment = moment(finishDate)
-    .subtract(finishDate.getSeconds(), `seconds`) // subtract - метод для вычитания
-    .subtract(finishDate.getMilliseconds(), `milliseconds`);
-  const finishMoment = moment(startDate)
-    .subtract(startDate.getSeconds(), `seconds`)
-    .subtract(startDate.getMilliseconds(), `milliseconds`);
-
-  const duration = moment.duration(startMoment.diff(finishMoment));
-  const readableDurations = [];
-
-  if (duration.days() > 0) {
-    readableDurations.push(`${addZero(duration.days())}D`);
-  }
-
-  if (duration.hours() > 0) {
-    readableDurations.push(`${addZero(duration.hours())}H`);
-  }
-
-  if (duration.minutes() > 0) {
-    readableDurations.push(`${addZero(duration.minutes())}M`);
-  }
-
-  return readableDurations.join(` `);
-};
-*/
-
 const getHoursAndMinutes = (timeObject) => {
-  return {
-    minutes: timeObject.getMinutes(),
-    hours: timeObject.getHours(),
-  };
+  return getFormatISO(timeObject).slice(getFormatISO(timeObject).indexOf(`T`) + 1);
 };
 
 const getEventTimeDiff = (startTime, endTime) => {
-  const start = startTime.getTime();
-  const end = endTime.getTime();
-
-  let sec = Math.abs(end - start) / 1000;
+  let start = startTime.getTime(); // возвращается начальное время в миллисекундах
+  let end = endTime.getTime(); // конечное
+  if (end <= start) {
+    return false;
+  }
   const result = {};
-  const s = {
+
+  let secondDiff = (end - start) / 1000; // разница в секундах между конечным и начальным временем
+  const secondsCount = {
     day: 86400,
     hour: 3600,
     minute: 60,
   };
-  Object.keys(s).forEach((key) => {
-    result[key] = Math.floor(sec / s[key]);
-    sec -= result[key] * s[key];
+
+  Object.keys(secondsCount).forEach((key) => {
+    result[key] = Math.floor(secondDiff / secondsCount[key]);
+    secondDiff -= result[key] * secondsCount[key];
   });
   return result;
 };
-
 
 const addZero = (digit) => {
   return digit < 10
@@ -86,17 +54,17 @@ const addZero = (digit) => {
 };
 const renderTimeDiff = (diffObj) => {
   const {day, hour, minute} = diffObj;
-  let result = ``;
-  if (day) {
-    result += addZero(day) + `D `;
+  let res = ``;
+  if (day > 0) {
+    res += addZero(day) + `D `;
   }
   if (hour) {
-    result += addZero(hour) + `H `;
+    res += addZero(hour) + `H `;
   }
   if (minute) {
-    result += addZero(minute) + `M`;
+    res += addZero(minute) + `M`;
   }
-  return result;
+  return res;
 };
 
 export const createPointTemplate = (point) => {
@@ -105,9 +73,11 @@ export const createPointTemplate = (point) => {
 
   const itemOffersTemplate = createItemOffersTemplate(additionalOptions);
   const instructionForType = getTypeInOrTypeTo(type);
+  const beginFormatISO = getFormatISO(dateFrom);
+  const endFormatISO = getFormatISO(dateTo);
   const startTime = getHoursAndMinutes(dateFrom);
   const endTime = getHoursAndMinutes(dateTo);
-  const timeDiff = getEventTimeDiff(dateFrom, dateTo);
+  const resultObj = getEventTimeDiff(dateFrom, dateTo);
 
   return (
     `<li class="trip-events__item">
@@ -119,11 +89,19 @@ export const createPointTemplate = (point) => {
 
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime=${moment(dateFrom).format(`YYYY-MM-DD[T]HH:mm`)}>${startTime.hours}:${startTime.minutes}</time>
+          <time
+            class="event__start-time"
+            datetime="${beginFormatISO}">
+              ${startTime}
+          </time>
       —
-          <time class="event__end-time" datetime=${moment(dateTo).format(`YYYY-MM-DD[T]HH:mm`)}>${endTime.hours}:${endTime.minutes}</time>
+          <time
+            class="event__end-time"
+            datetime="${endFormatISO}">
+              ${endTime}
+          </time>
         </p>
-        <p class="event__duration">${renderTimeDiff(timeDiff)}</p>
+        <p class="event__duration">${renderTimeDiff(resultObj)}</p>
       </div>
 
       <p class="event__price">

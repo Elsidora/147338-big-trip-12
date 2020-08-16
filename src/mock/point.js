@@ -1,6 +1,8 @@
 import {PRICE, CITIES} from "../const";
 import {getRandomInteger, shuffle, getRandomBoolean, getRandomDate} from "../util";
-
+const maxDay = 6;
+const maxHour = 23;
+const maxMinute = 59;
 const Count = {
   MIN: 1,
   MAX: 5,
@@ -283,31 +285,17 @@ const getRandomPrice = () => {
 прошедших с 1 января 1970 00:00:00 по UTC до времени,
 представляемого обновлённым экземпляром Date.
 */
-// const maxStartDaysGap = 4;
-// const maxDurationEventMinutes = 135;
 
-const generateFromDate = () => {
 
-  const maxDaysGap = 7;
-  const daysGap = getRandomInteger(0, maxDaysGap);
+const generateDate = (minDay, minHour, minMinute ) => {
+  const daysGap = getRandomInteger(minDay, maxDay);
+  const hoursGap = getRandomInteger(minHour, maxHour);
+  const minutesGap = getRandomInteger(minMinute, maxMinute);
   const currentDate = new Date();
 
   currentDate.setDate(currentDate.getDate() - daysGap);
-  currentDate.setHours(currentDate.getHours() - daysGap);
-  currentDate.setMinutes(currentDate.getMinutes() - daysGap);
-
-  return currentDate;
-};
-
-const generateToDate = () => {
-
-  const maxDaysGap = 4;
-  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap) / 2;
-  const currentDate = new Date();
-
-  currentDate.setDate(currentDate.getDate() + daysGap);
-  currentDate.setHours(currentDate.getHours() + daysGap);
-  currentDate.setMinutes(currentDate.getMinutes() + daysGap);
+  currentDate.setHours(currentDate.getHours() - hoursGap);
+  currentDate.setMinutes(currentDate.getMinutes() - minutesGap);
 
   return currentDate;
 };
@@ -321,11 +309,12 @@ export const generateRoutePoint = () => {
   const description = sentence.slice(0, getRandomInteger(1, sentence.length)).join(`. `);
 
   const pictures = new Array(getRandomInteger(Count.MIN, Count.MAX)).fill().map(getPictureSrc);
-  // const dateFrom = getRandomDate(maxStartDaysGap * 24 * 60);
-  // const startTime = generateStartDate();
-  // const endTime = generateEndDate();
-  const dateFrom = generateFromDate();
-  const dateTo = generateToDate();
+
+  const dateFrom = generateDate(0, 0, 0, maxDay, maxHour, maxMinute);
+  const dateTo = generateDate(-maxDay / 2, -maxHour / 2, -maxMinute / 2, maxDay / 2, maxHour / 2, maxMinute / 2);
+
+  console.log(dateFrom);
+  console.log(dateTo);
 
 
   return {

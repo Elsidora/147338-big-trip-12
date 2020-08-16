@@ -24,17 +24,30 @@ export const shuffle = (array) => {
   return array;
 };
 
-export const getRandomDate = (maxMinuteOffset, dateFrom = null) => {
-  const millisecOffset = 1000 * 60 * maxMinuteOffset;
-  const randomTimeOffset = getRandomInteger(0, +millisecOffset); // рандомное смещение времени
-  const startTime = dateFrom !== null
-    ? dateFrom.getTime()
-    : new Date().getTime();
-
-  return new Date(startTime + randomTimeOffset);
-};
-
 export const humanizeEventDate = (dateObject) => {
   return dateObject.toLocaleString(`en-US`, {day: `numeric`, month: `short`});
 };
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  currentDate.setHours(23, 59, 59, 999);
+
+  return currentDate;
+};
+
+
+export const isPointFutureExpiringToday = (dateFrom) => {
+
+  const currentDate = getCurrentDate();
+
+  return currentDate.getTime() < dateFrom.getTime();
+};
+
+export const isPointPastExpiringToday = (dateTo) => {
+
+  const currentDate = getCurrentDate();
+
+  return currentDate.getTime() > dateTo.getTime();
+};
+
 

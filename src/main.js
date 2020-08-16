@@ -6,7 +6,7 @@ import {createTripDaysTemplate} from "./view/trip-days";
 import {createPointTemplate} from "./view/point";
 import {createFormEditTemplate} from "./view/form-edit";
 import {createTripInfoTemplate} from "./view/trip-info";
-import {renderHtmlElement, calendars} from "./util";
+import {renderHtmlElement} from "./util";
 import {generateRoutePoint} from './mock/point';
 
 const POINT_COUNT = 8;
@@ -16,7 +16,7 @@ const points = new Array(POINT_COUNT).fill().map(generateRoutePoint);
 const tripStartDate = points[0].dateFrom;
 const tripEndDate = points[points.length - 1].dateTo;
 // set last event mpnth for comparison
-tripEndDate.setMonth(11);
+tripEndDate.setMonth(9);
 
 const pageBodyElement = document.querySelector(`.page-body`);
 const headerElement = pageBodyElement.querySelector(`.page-header`);
