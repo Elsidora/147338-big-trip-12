@@ -1,5 +1,5 @@
 import {PRICE, CITIES} from "../const";
-import {getRandomInteger, shuffle, getRandomBoolean, getRandomDate} from "../util";
+import {getRandomInteger, shuffle, getRandomBoolean} from "../util";
 const maxDay = 6;
 const maxHour = 23;
 const maxMinute = 59;
@@ -286,8 +286,7 @@ const getRandomPrice = () => {
 представляемого обновлённым экземпляром Date.
 */
 
-
-const generateDate = (minDay, minHour, minMinute ) => {
+const generateDate = (minDay, minHour, minMinute) => {
   const daysGap = getRandomInteger(minDay, maxDay);
   const hoursGap = getRandomInteger(minHour, maxHour);
   const minutesGap = getRandomInteger(minMinute, maxMinute);
@@ -312,10 +311,6 @@ export const generateRoutePoint = () => {
 
   const dateFrom = generateDate(0, 0, 0, maxDay, maxHour, maxMinute);
   const dateTo = generateDate(-maxDay / 2, -maxHour / 2, -maxMinute / 2, maxDay / 2, maxHour / 2, maxMinute / 2);
-
-  console.log(dateFrom);
-  console.log(dateTo);
-
 
   return {
     type,
