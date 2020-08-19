@@ -1,6 +1,5 @@
-// import moment from 'moment';
-import {ACTIVITY} from "../const";
-import {shuffle, helpersDate} from '../util';
+import {ACTIVITY} from '../const';
+import {shuffle, helpersDate, getTypeInOrTypeTo} from '../util';
 
 const createItemOffersTemplate = (additionalOptions) => {
   const additionalOptionsShallow = shuffle(additionalOptions.slice());
@@ -12,10 +11,6 @@ const createItemOffersTemplate = (additionalOptions) => {
         &euro;&nbsp;<span class="event__offer-price">${price}</span>
       </li>
     `).join(``);
-};
-
-const getTypeInOrTypeTo = (type) => {
-  return (ACTIVITY.includes(type.toLowerCase()) ? `${type} in` : `${type} to`);
 };
 
 const getEventTimeDiff = (startTime, endTime) => {
@@ -65,7 +60,7 @@ export const createPointTemplate = (point) => {
   const {type, cityName, additionalOptions, dateFrom, dateTo, price} = point;
 
   const itemOffersTemplate = createItemOffersTemplate(additionalOptions);
-  const instructionForType = getTypeInOrTypeTo(type);
+  const instructionForType = getTypeInOrTypeTo(ACTIVITY, type);
   const beginDatePoint = helpersDate.humanizeEventDateTime(dateFrom);
   const endDatePoint = helpersDate.humanizeEventDateTime(dateTo);
   const startTime = helpersDate.humanizeEventTime(dateFrom);

@@ -1,10 +1,11 @@
 import {TRANSFER, ACTIVITY} from "../const";
+import {getTypeInOrTypeTo} from '../util';
 import {getPointDetailsTemplate} from './point-details';
 
 const getItemTypeTemplate = (arr) => {
   return arr.map((type) => `<div class="event__type-item">
     <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase()}${type.slice(1)}</label>
+    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
     </div>`
   ).join(``);
 };
@@ -12,7 +13,7 @@ const getItemTypeTemplate = (arr) => {
 export const createFormEditTemplate = (point = {}) => {
   const {
     type = `bus`,
-    typeTitle = 'Bus',
+    typeTitle = `Bus`,
     cityName = `Paris`,
     additionalOptions = [],
     price = ``,
@@ -25,6 +26,7 @@ export const createFormEditTemplate = (point = {}) => {
 
   const itemTransferTemplate = getItemTypeTemplate(TRANSFER);
   const itemActivityTemplate = getItemTypeTemplate(ACTIVITY);
+  const instructionForType = getTypeInOrTypeTo(ACTIVITY, typeTitle);
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
     <header class="event__header">
@@ -50,7 +52,7 @@ export const createFormEditTemplate = (point = {}) => {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          Flight to
+          ${instructionForType}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityName}" list="destination-list-1">
         <datalist id="destination-list-1">
