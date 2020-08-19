@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const renderHtmlElement = (container, markupString, position) => {
   container.insertAdjacentHTML(position, markupString);
 };
@@ -24,8 +26,11 @@ export const shuffle = (array) => {
   return array;
 };
 
-export const humanizeEventDate = (dateObject) => {
-  return dateObject.toLocaleString(`en-US`, {day: `numeric`, month: `short`});
+export const helpersDate = {
+  humanizeEventDate: (dateObject) => dateObject.toLocaleString(`en-US`, {day: `numeric`, month: `short`}),
+  humanizeEventTime: (dateObject) => dateObject.toLocaleTimeString(`en-US`, {hour12: false, hour: `2-digit`, minute: `2-digit`}),
+  humanizeEventDateTime: (dateObject) => moment(dateObject).format(`YYYY-MM-DD[T]HH:mm`),
+  humanizeEventDateWithoutTime: (dateObject) => moment(dateObject).format(`YYYY-MM-DD`),
 };
 
 const getCurrentDate = () => {

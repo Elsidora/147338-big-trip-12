@@ -7,11 +7,11 @@ const Count = {
 };
 
 /* Переменные, которые отвечают за генерацию дат*/
-const startDay = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000); // Пусть начало путешествия будет всегда через 5 дней
-const startDayTimestamp = startDay.getTime(); // getTime() возвращает числовое значение указанной даты в виде количества миллисекунд, прошедших с 00:00:00 1 января 1970 года по UTC
+const startDay = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000); // Пусть начало путешествия будет всегда через 5 дней (Date.now() - возвращает кол-во миллисек. текущей даты)
+const startDayTimestamp = startDay.getTime(); // предполагаемое время начала путешествия (getTime() возвращает числовое значение указанной даты в виде количества миллисекунд, прошедших с 00:00:00 1 января 1970 года по UTC)
 const maxDurationDays = 6; // максимальное количество дней продолжительности путешествия
-const maxDurationMilliseconds = maxDurationDays * 24 * 60 * 60 * 1000;
-const endDayTimestamp = getRandomInteger(startDayTimestamp, startDayTimestamp + maxDurationMilliseconds); // получили метку окончания путешествия
+const maxDurationMilliseconds = maxDurationDays * 24 * 60 * 60 * 1000; // продолжительность путешествия в миллисек.
+const endDayTimestamp = getRandomInteger(startDayTimestamp, startDayTimestamp + maxDurationMilliseconds); // получили предполагаемое время окончания путешествия в миллисек.
 let tempStartPoint = startDayTimestamp; // к этой переменной будет доступ только у функции генерации dateTo
 /* Конец этих переменных */
 
@@ -33,7 +33,7 @@ const getRandomOffers = (count) => shuffle(OFFERSAVAILABLE.slice()).slice(0, cou
 const getPointDateTo = () => {
   const tempEndPoint = getRandomInteger(tempStartPoint, Math.floor(tempStartPoint + (endDayTimestamp - tempStartPoint) / 2)); // вычислили время окончания точки
 
-  tempStartPoint = tempEndPoint; // переназначили время старта для следующей генерации
+  tempStartPoint = tempEndPoint + 30 * 60 * 1000; // переназначили время старта для следующей генерации
 
   return tempEndPoint;
 };
@@ -45,7 +45,7 @@ const getPointDateTo = () => {
   как, собственно и будет далее:)
  */
 
-const generateRoutePoint = () => {
+const generatePointOfRoute = () => {
   const types = TRANSFER.concat(ACTIVITY);
   const type = types[getRandomInteger(0, types.length - 1)];
   /* Получаем отображаемое название типа точки - просто приводим первую букву к верхнему регистру */
@@ -80,7 +80,7 @@ const generateRoutePoint = () => {
 };
 
 export const generatePointsArray = (count) => {
-  return new Array(count).fill().map(generateRoutePoint);
+  return new Array(count).fill().map(generatePointOfRoute);
 };
 
 

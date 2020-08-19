@@ -1,5 +1,5 @@
 import {TRANSFER, ACTIVITY} from "../const";
-import {getPointDetailsTemplate} from './details';
+import {getPointDetailsTemplate} from './point-details';
 
 const getItemTypeTemplate = (arr) => {
   return arr.map((type) => `<div class="event__type-item">
@@ -12,6 +12,7 @@ const getItemTypeTemplate = (arr) => {
 export const createFormEditTemplate = (point = {}) => {
   const {
     type = `bus`,
+    typeTitle = 'Bus',
     cityName = `Paris`,
     additionalOptions = [],
     price = ``,
@@ -83,7 +84,7 @@ export const createFormEditTemplate = (point = {}) => {
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
 
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite">
       <label class="event__favorite-btn" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

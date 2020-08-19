@@ -1,11 +1,11 @@
 import {CITIES} from '../const';
-import {humanizeEventDate} from '../util';
+import {helpersDate} from '../util';
 
 const compareTripDates = (start, end) => {
   const startMonth = start.getMonth();
   const endMonth = end.getMonth();
 
-  return startMonth < endMonth ? humanizeEventDate(end) : end.getDate();
+  return startMonth < endMonth ? helpersDate.humanizeEventDate(end) : end.getDate();
 };
 
 const getUniqueCities = (arrayCities) => {
@@ -32,7 +32,7 @@ const getRouteOfEvent = (uniqueArrayCities) => {
 };
 
 export const createTripInfoTemplate = (startTrip, endTrip) => {
-  const tripStartDate = humanizeEventDate(startTrip);
+  const tripStartDate = helpersDate.humanizeEventDate(startTrip);
   const tripEndDate = compareTripDates(startTrip, endTrip);
   return (
     `<section class="trip-main__trip-info  trip-info">

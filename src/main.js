@@ -2,23 +2,21 @@ import flatpickr from "flatpickr";
 import {createSiteMenuTemplate} from "./view/site-menu";
 import {createFilterTemplate} from "./view/filter";
 import {createSortingTemplate} from "./view/sorting";
-import {createTripDaysTemplate} from "./view/trip-days";
+import {createTripDaysTemplate} from "./view/point-list";
 import {createPointTemplate} from "./view/point";
-import {createFormEditTemplate} from "./view/form-edit";
+import {createFormEditTemplate} from "./view/point-edit";
 import {createTripInfoTemplate} from "./view/trip-info";
 import {renderHtmlElement} from "./util";
-import {generateRoutePoint} from "./mock/point";
+import {generatePointsArray} from "./mock/point";
 import {generateFilter} from "./mock/filter";
 
 const POINT_COUNT = 8;
 
-const points = new Array(POINT_COUNT).fill().map(generateRoutePoint);
+const points = generatePointsArray(POINT_COUNT);
 const filters = generateFilter(points);
 
 const tripStartDate = points[0].dateFrom;
 const tripEndDate = points[points.length - 1].dateTo;
-// set last event mpnth for comparison
-tripEndDate.setMonth(9);
 
 const pageBodyElement = document.querySelector(`.page-body`);
 const headerElement = pageBodyElement.querySelector(`.page-header`);
@@ -39,7 +37,7 @@ renderHtmlElement(tripControlsElement, createSiteMenuTemplate(), `beforeend`);
 renderHtmlElement(tripControlsElement, createFilterTemplate(filters), `beforeend`);
 renderHtmlElement(tripEventsElement, createSortingTemplate(), `beforeend`);
 renderHtmlElement(tripEventsElement, createFormEditTemplate(points[0]), `beforeend`);
-renderHtmlElement(tripEventsElement, createTripDaysTemplate(tripStartDate), `beforeend`);
+renderHtmlElement(tripEventsElement, createTripDaysTemplate(points), `beforeend`);
 renderTripEventsList();
 
 const flatpickrOptions = {

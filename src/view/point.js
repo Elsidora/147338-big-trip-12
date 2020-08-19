@@ -1,6 +1,6 @@
 // import moment from 'moment';
 import {ACTIVITY} from "../const";
-import {shuffle} from '../util';
+import {shuffle, helpersDate} from '../util';
 
 const createItemOffersTemplate = (additionalOptions) => {
   const additionalOptionsShallow = shuffle(additionalOptions.slice());
@@ -16,13 +16,6 @@ const createItemOffersTemplate = (additionalOptions) => {
 
 const getTypeInOrTypeTo = (type) => {
   return (ACTIVITY.includes(type.toLowerCase()) ? `${type} in` : `${type} to`);
-};
-
-const getFormatISO = (objectTime) => {
-  return objectTime.toISOString().slice(0, objectTime.toISOString().lastIndexOf(`:`));
-};
-const getHoursAndMinutes = (timeObject) => {
-  return getFormatISO(timeObject).slice(getFormatISO(timeObject).indexOf(`T`) + 1);
 };
 
 const getEventTimeDiff = (startTime, endTime) => {
@@ -73,10 +66,10 @@ export const createPointTemplate = (point) => {
 
   const itemOffersTemplate = createItemOffersTemplate(additionalOptions);
   const instructionForType = getTypeInOrTypeTo(type);
-  const beginFormatISO = getFormatISO(dateFrom);
-  const endFormatISO = getFormatISO(dateTo);
-  const startTime = getHoursAndMinutes(dateFrom);
-  const endTime = getHoursAndMinutes(dateTo);
+  const beginDatePoint = helpersDate.humanizeEventDateTime(dateFrom);
+  const endDatePoint = helpersDate.humanizeEventDateTime(dateTo);
+  const startTime = helpersDate.humanizeEventTime(dateFrom);
+  const endTime = helpersDate.humanizeEventTime(dateTo);
   const resultObj = getEventTimeDiff(dateFrom, dateTo);
 
   return (
@@ -91,13 +84,13 @@ export const createPointTemplate = (point) => {
         <p class="event__time">
           <time
             class="event__start-time"
-            datetime="${beginFormatISO}">
+            datetime="${beginDatePoint}">
               ${startTime}
           </time>
       —
           <time
             class="event__end-time"
-            datetime="${endFormatISO}">
+            datetime="${endDatePoint}">
               ${endTime}
           </time>
         </p>
