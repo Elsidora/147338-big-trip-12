@@ -1,7 +1,7 @@
 import flatpickr from "flatpickr";
 import SiteMenuView from "./view/site-menu";
 import FilterView from "./view/filter";
-import {createSortingTemplate} from "./view/sorting";
+import SortingView from "./view/sorting";
 import {createTripDaysTemplate} from "./view/point-list";
 import {createPointTemplate} from "./view/point";
 import {createFormEditTemplate} from "./view/point-edit";
@@ -35,7 +35,7 @@ const renderTripEventsList = () => {
 renderHtmlElement(tripMainElement, createTripInfoTemplate(tripStartDate, tripEndDate), `afterbegin`);
 renderElement(tripControlsElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 renderElement(tripControlsElement, new FilterView(filters).getElement(), RenderPosition.BEFOREEND);
-renderHtmlElement(tripEventsElement, createSortingTemplate(), `beforeend`);
+renderElement(tripEventsElement, new SortingView().getElement(), RenderPosition.BEFOREEND);
 renderHtmlElement(tripEventsElement, createFormEditTemplate(points[0]), `beforeend`);
 renderHtmlElement(tripEventsElement, createTripDaysTemplate(points), `beforeend`);
 renderTripEventsList();
