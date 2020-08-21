@@ -16,7 +16,7 @@ export const renderElement = (container, element, place) => {
   }
 };
 
-export const renderHtmlElementTemplate = (container, markupString, position) => {
+export const renderHtmlElement = (container, markupString, position) => {
   container.insertAdjacentHTML(position, markupString);
 };
 

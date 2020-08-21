@@ -1,12 +1,12 @@
 import flatpickr from "flatpickr";
-import {createSiteMenuTemplate} from "./view/site-menu";
+import SiteMenuView from "./view/site-menu";
 import {createFilterTemplate} from "./view/filter";
 import {createSortingTemplate} from "./view/sorting";
 import {createTripDaysTemplate} from "./view/point-list";
 import {createPointTemplate} from "./view/point";
 import {createFormEditTemplate} from "./view/point-edit";
 import {createTripInfoTemplate} from "./view/trip-info";
-import {renderHtmlElement} from "./util";
+import {renderHtmlElement, renderElement, RenderPosition} from "./util";
 import {generatePointsArray} from "./mock/point";
 import {generateFilter} from "./mock/filter";
 
@@ -33,7 +33,7 @@ const renderTripEventsList = () => {
 };
 
 renderHtmlElement(tripMainElement, createTripInfoTemplate(tripStartDate, tripEndDate), `afterbegin`);
-renderHtmlElement(tripControlsElement, createSiteMenuTemplate(), `beforeend`);
+renderElement(tripControlsElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 renderHtmlElement(tripControlsElement, createFilterTemplate(filters), `beforeend`);
 renderHtmlElement(tripEventsElement, createSortingTemplate(), `beforeend`);
 renderHtmlElement(tripEventsElement, createFormEditTemplate(points[0]), `beforeend`);
