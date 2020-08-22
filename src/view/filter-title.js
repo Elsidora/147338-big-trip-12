@@ -1,19 +1,18 @@
 import {createElement} from "../util";
 
-export const createTripInfoTemplate = () => {
+export const createFilterTitleTemplate = () => {
   return (
-    `<section class="trip-main__trip-info  trip-info">
-    </section>`
+    `<h2 class="visually-hidden">Filter events</h2>`
   );
 };
 
-export default class TripInfo {
+export default class FilterTitle {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTripInfoTemplate();
+    return createFilterTitleTemplate();
   }
 
   getElement() {

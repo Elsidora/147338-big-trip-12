@@ -1,19 +1,20 @@
 import {createElement} from "../util";
 
-export const createTripInfoTemplate = () => {
+const createTripCostTemplate = () => {
   return (
-    `<section class="trip-main__trip-info  trip-info">
-    </section>`
+    `<p class="trip-info__cost">
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+    </p>`
   );
 };
 
-export default class TripInfo {
+export default class TripCost {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTripInfoTemplate();
+    return createTripCostTemplate();
   }
 
   getElement() {
@@ -28,3 +29,5 @@ export default class TripInfo {
     this._element = null;
   }
 }
+
+

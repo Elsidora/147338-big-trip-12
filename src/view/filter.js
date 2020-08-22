@@ -26,13 +26,10 @@ const createFilterTemplate = (filterItems) => {
     .map((filter, index) => createFilterItemTemplate(filter, index === 0))
     .join(``);
   return (
-    `<div class="trip-wrap">
-      <h2 class="visually-hidden">Filter events</h2>
-      <form class="trip-filters" action="#" method="get">
-        ${filterItemsTemplate}
-        <button class="visually-hidden" type="submit">Accept filter</button>
-      </form>
-    </div>`
+    `<form class="trip-filters" action="#" method="get">
+      ${filterItemsTemplate}
+      <button class="visually-hidden" type="submit">Accept filter</button>
+    </form>`
   );
 };
 
