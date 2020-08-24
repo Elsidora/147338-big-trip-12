@@ -83,12 +83,12 @@ const renderPoint = (pointContainer, point) => {
   });
 
   pointEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
-    replaceFormToPoint();
+    closeFormEditPoint();
   });
 
   pointEditComponent.getElement().addEventListener(`submit`, (evt) => {
     evt.preventDefault();
-    replaceFormToPoint();
+    closeFormEditPoint();
   });
 
   renderElement(pointContainer, pointComponent.getElement(), RenderPosition.BEFOREEND);
