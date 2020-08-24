@@ -1,5 +1,3 @@
-import flatpickr from "flatpickr";
-
 import TripInfoView from "./view/trip-info";
 import TripRouteView from "./view/trip-route";
 import TripCostView from "./view/trip-cost";
@@ -17,7 +15,7 @@ import TripPointsListView from "./view/trip-points-list";
 import PointView from "./view/point";
 import PointEditView from "./view/point-edit";
 
-import {renderHtmlElement, renderElement, RenderPosition, getPointsByDays} from "./util";
+import {renderHtmlElement, renderElement, RenderPosition, getPointsByDays, closeElement, flatpickrOptions} from "./util";
 import {generatePointsArray} from "./mock/point";
 import {generateFilter} from "./mock/filter";
 
@@ -71,8 +69,18 @@ const renderPoint = (pointContainer, point) => {
     pointContainer.replaceChild(pointComponent.getElement(), pointEditComponent.getElement());
   };
 
+  const closeFormEditPoint = () => {
+    replaceFormToPoint();
+    document.removeEventListener(`keydown`, onEscapePress);
+  };
+
+  const onEscapePress = (evt) => {
+    closeElement.isEscapeEvent(evt, closeFormEditPoint);
+  };
+
   pointComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replacePointToForm();
+    document.addEventListener(`keydown`, onEscapePress);
   });
 
   pointEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
@@ -112,5 +120,3 @@ const renderMain = () => {
 renderInfo(tripMainElement);
 renderControls(tripControlsElement);
 renderMain();
-// const startDateEventField = flatpickr(`#event-start-time-1`, flatpickrOptions);
-// const endDateEventField = flatpickr(`#event-end-time-1`, flatpickrOptions);

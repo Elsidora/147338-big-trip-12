@@ -1,4 +1,5 @@
 import moment from "moment";
+import flatpickr from "flatpickr";
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -113,5 +114,14 @@ export const flatpickrOptions = {
   minDate: `today`,
   onReady(selectedDates, dateStr, instance) {
     instance._input.placeholder = instance.formatDate(new Date(), `d/m/y H:i`);
+  },
+};
+
+export const closeElement = {
+  isEscapeEvent: (evt, action) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      action();
+    }
   },
 };
