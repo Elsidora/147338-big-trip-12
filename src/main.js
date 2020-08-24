@@ -21,7 +21,7 @@ import {renderElement, RenderPosition, getPointsByDays, closeElement, getDateOfF
 import {generatePointsArray} from "./mock/point";
 import {generateFilter} from "./mock/filter";
 
-const POINT_COUNT = 0;
+const POINT_COUNT = 20;
 
 const points = generatePointsArray(POINT_COUNT);
 const filters = generateFilter(points);
@@ -37,7 +37,7 @@ const tripEventsElement = mainElement.querySelector(`.trip-events`);
 const renderInfo = (renderInfoContainer) => {
 
   const tripInfoComponent = new TripInfoView();
-  const tripCostComponent = new TripCostView();
+  const tripCostComponent = new TripCostView(points);
 
   if (!points.length) {
     renderElement(renderInfoContainer, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
@@ -116,7 +116,7 @@ const renderDays = (pointsArr, daysListContainer, objectDate, index) => {
 };
 
 const renderMain = () => {
-  if(!points.length) {
+  if (!points.length) {
     const noPointsComponent = new NoPointsView();
 
     renderElement(tripEventsElement, noPointsComponent.getElement(), RenderPosition.BEFOREEND);
