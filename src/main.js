@@ -15,7 +15,7 @@ import TripPointsListView from "./view/trip-points-list";
 import PointView from "./view/point";
 import PointEditView from "./view/point-edit";
 
-import {renderHtmlElement, renderElement, RenderPosition, getPointsByDays, closeElement, flatpickrOptions} from "./util";
+import {renderElement, RenderPosition, getPointsByDays, closeElement, getDateOfForm} from "./util";
 import {generatePointsArray} from "./mock/point";
 import {generateFilter} from "./mock/filter";
 
@@ -24,8 +24,6 @@ const POINT_COUNT = 20;
 const points = generatePointsArray(POINT_COUNT);
 const filters = generateFilter(points);
 const groupedPoints = getPointsByDays(points);
-
-console.log(groupedPoints);
 
 const pageBodyElement = document.querySelector(`.page-body`);
 const headerElement = pageBodyElement.querySelector(`.page-header`);
@@ -80,6 +78,7 @@ const renderPoint = (pointContainer, point) => {
 
   pointComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replacePointToForm();
+    getDateOfForm();
     document.addEventListener(`keydown`, onEscapePress);
   });
 
@@ -113,8 +112,6 @@ const renderMain = () => {
   renderElement(tripEventsElement, sortingComponent.getElement(), RenderPosition.BEFOREEND);
   renderElement(tripEventsElement, tripDaysListComponent.getElement(), RenderPosition.BEFOREEND);
   Object.keys(groupedPoints).map((day, index) => renderDays(groupedPoints[day].points, tripDaysListComponent, groupedPoints[day].points[0].dateFrom, index + 1));
-
-  console.log(Object.keys(groupedPoints));
 };
 
 renderInfo(tripMainElement);

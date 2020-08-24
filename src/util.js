@@ -104,7 +104,16 @@ export const isPointPastExpiringToday = (dateTo) => {
   return currentDate.getTime() > dateTo.getTime();
 };
 
-export const flatpickrOptions = {
+export const closeElement = {
+  isEscapeEvent: (evt, action) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      action();
+    }
+  },
+};
+
+const flatpickrOptions = {
   enableTime: true,
   // eslint-disable-next-line camelcase
   time_24hr: true,
@@ -117,11 +126,9 @@ export const flatpickrOptions = {
   },
 };
 
-export const closeElement = {
-  isEscapeEvent: (evt, action) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      evt.preventDefault();
-      action();
-    }
-  },
+
+export const getDateOfForm = () => {
+  const startDateEventField = flatpickr(`#event-start-time-1`, flatpickrOptions);
+  const endDateEventField = flatpickr(`#event-end-time-1`, flatpickrOptions);
+  return (startDateEventField, endDateEventField);
 };
