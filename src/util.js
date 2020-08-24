@@ -34,6 +34,26 @@ export const createElement = (template) => {
 // то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
 // а не просто <a>Link 1</a><a>Link 2</a>
 
+export const getPointsByDays = (points) => {
+  const groupedPoints = {};
+
+  points.forEach((item) => {
+    const dayTitle = `${helpersDate.humanizeEventDate(item.dateFrom)}`;
+    // dayTitle - месяц, число
+
+    if (typeof groupedPoints[dayTitle] === `undefined`) {
+      groupedPoints[dayTitle] = {
+        dayTitle,
+        points: []
+      };
+    }
+    groupedPoints[dayTitle].points.push(item);
+  });
+
+  return groupedPoints; // возвращает объект массивов групп точек путешествия, распределенных по числам месяца
+};
+
+
 export const getRandomInteger = (a = 0, b = 1) => {
   const min = Math.ceil(Math.min(a, b));
   const max = Math.floor(Math.max(a, b));
@@ -55,7 +75,6 @@ export const getTypeInOrTypeTo = (arr, type) => {
   return (arr.includes(type.toLowerCase()) ? `${type} in` : `${type} to`);
 };
 
-
 export const helpersDate = {
   humanizeEventDate: (dateObject) => dateObject.toLocaleString(`en-US`, {day: `numeric`, month: `short`}),
   humanizeEventTime: (dateObject) => dateObject.toLocaleTimeString(`en-US`, {hour12: false, hour: `2-digit`, minute: `2-digit`}),
@@ -69,7 +88,6 @@ const getCurrentDate = () => {
 
   return currentDate;
 };
-
 
 export const isPointFutureExpiringToday = (dateFrom) => {
 
@@ -85,4 +103,15 @@ export const isPointPastExpiringToday = (dateTo) => {
   return currentDate.getTime() > dateTo.getTime();
 };
 
-
+export const flatpickrOptions = {
+  enableTime: true,
+  // eslint-disable-next-line camelcase
+  time_24hr: true,
+  altInput: true,
+  altFormat: `d/m/y H:i`,
+  dateFormat: `d/m/y H:i`,
+  minDate: `today`,
+  onReady(selectedDates, dateStr, instance) {
+    instance._input.placeholder = instance.formatDate(new Date(), `d/m/y H:i`);
+  },
+};

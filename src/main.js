@@ -9,18 +9,25 @@ import FilterTitleView from "./view/filter-title";
 import FilterView from "./view/filter";
 
 import SortingView from "./view/sorting";
-import {createTripDaysTemplate} from "./view/point-list";
-import {createPointTemplate} from "./view/point";
-import {createFormEditTemplate} from "./view/point-edit";
+import TripDaysListView from "./view/trip-days-list";
+import TripDaysItemView from "./view/trip-days-item";
+import TripDayInfoView from "./view/trip-day-info";
+import TripPointsListView from "./view/trip-points-list";
 
-import {renderHtmlElement, renderElement, RenderPosition} from "./util";
+import PointView from "./view/point";
+import PointEditView from "./view/point-edit";
+
+import {renderHtmlElement, renderElement, RenderPosition, getPointsByDays} from "./util";
 import {generatePointsArray} from "./mock/point";
 import {generateFilter} from "./mock/filter";
 
-const POINT_COUNT = 8;
+const POINT_COUNT = 20;
 
 const points = generatePointsArray(POINT_COUNT);
 const filters = generateFilter(points);
+const groupedPoints = getPointsByDays(points);
+
+console.log(groupedPoints);
 
 const pageBodyElement = document.querySelector(`.page-body`);
 const headerElement = pageBodyElement.querySelector(`.page-header`);
@@ -28,13 +35,6 @@ const mainElement = pageBodyElement.querySelector(`.page-main`);
 const tripMainElement = headerElement.querySelector(`.trip-main`);
 const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = mainElement.querySelector(`.trip-events`);
-
-const renderTripEventsList = () => {
-  const tripEventsListElement = tripEventsElement.querySelector(`.trip-events__list`);
-  for (let i = 1; i < POINT_COUNT; i += 1) {
-    renderHtmlElement(tripEventsListElement, createPointTemplate(points[i]), `beforeend`);
-  }
-};
 
 const renderInfo = (renderInfoContainer) => {
   const tripStartDate = points[0].dateFrom;
@@ -58,27 +58,59 @@ const renderControls = (renderControlsContainer) => {
   renderElement(renderControlsContainer, filterComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
-renderInfo(tripMainElement);
-renderControls(tripControlsElement);
+const renderPoint = (pointContainer, point) => {
 
+  const pointComponent = new PointView(point);
+  const pointEditComponent = new PointEditView(point);
 
-renderElement(tripEventsElement, new SortingView().getElement(), RenderPosition.BEFOREEND);
-renderHtmlElement(tripEventsElement, createFormEditTemplate(points[0]), `beforeend`);
-renderHtmlElement(tripEventsElement, createTripDaysTemplate(points), `beforeend`);
-renderTripEventsList();
+  const replacePointToForm = () => {
+    pointContainer.replaceChild(pointEditComponent.getElement(), pointComponent.getElement());
+  };
 
-const flatpickrOptions = {
-  enableTime: true,
-  // eslint-disable-next-line camelcase
-  time_24hr: true,
-  altInput: true,
-  altFormat: `d/m/y H:i`,
-  dateFormat: `d/m/y H:i`,
-  minDate: `today`,
-  onReady(selectedDates, dateStr, instance) {
-    instance._input.placeholder = instance.formatDate(new Date(), `d/m/y H:i`);
-  },
+  const replaceFormToPoint = () => {
+    pointContainer.replaceChild(pointComponent.getElement(), pointEditComponent.getElement());
+  };
+
+  pointComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replacePointToForm();
+  });
+
+  pointEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceFormToPoint();
+  });
+
+  pointEditComponent.getElement().addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToPoint();
+  });
+
+  renderElement(pointContainer, pointComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
-const startDateEventField = flatpickr(`#event-start-time-1`, flatpickrOptions);
-const endDateEventField = flatpickr(`#event-end-time-1`, flatpickrOptions);
+const renderDays = (pointsArr, daysListContainer) => {
+  const tripDaysItemComponent = new TripDaysItemView();
+  const tripDayInfoComponent = new TripDayInfoView();
+  const tripPointsListComponent = new TripPointsListView();
+
+  renderElement(daysListContainer.getElement(), tripDaysItemComponent.getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripDaysItemComponent.getElement(), tripDayInfoComponent.getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripDaysItemComponent.getElement(), tripPointsListComponent.getElement(), RenderPosition.BEFOREEND);
+  pointsArr.map((point) => renderPoint(tripPointsListComponent.getElement(), point));
+};
+
+const renderMain = () => {
+  const sortingComponent = new SortingView();
+  const tripDaysListComponent = new TripDaysListView();
+
+  renderElement(tripEventsElement, sortingComponent.getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripEventsElement, tripDaysListComponent.getElement(), RenderPosition.BEFOREEND);
+  Object.keys(groupedPoints).map((day) => renderDays(groupedPoints[day].points, tripDaysListComponent));
+
+  console.log(Object.keys(groupedPoints));
+};
+
+renderInfo(tripMainElement);
+renderControls(tripControlsElement);
+renderMain();
+// const startDateEventField = flatpickr(`#event-start-time-1`, flatpickrOptions);
+// const endDateEventField = flatpickr(`#event-end-time-1`, flatpickrOptions);
