@@ -87,9 +87,9 @@ const renderPoint = (pointContainer, point) => {
   renderElement(pointContainer, pointComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
-const renderDays = (pointsArr, daysListContainer) => {
+const renderDays = (pointsArr, daysListContainer, objectDate, index) => {
   const tripDaysItemComponent = new TripDaysItemView();
-  const tripDayInfoComponent = new TripDayInfoView();
+  const tripDayInfoComponent = new TripDayInfoView(objectDate, index);
   const tripPointsListComponent = new TripPointsListView();
 
   renderElement(daysListContainer.getElement(), tripDaysItemComponent.getElement(), RenderPosition.BEFOREEND);
@@ -104,7 +104,7 @@ const renderMain = () => {
 
   renderElement(tripEventsElement, sortingComponent.getElement(), RenderPosition.BEFOREEND);
   renderElement(tripEventsElement, tripDaysListComponent.getElement(), RenderPosition.BEFOREEND);
-  Object.keys(groupedPoints).map((day) => renderDays(groupedPoints[day].points, tripDaysListComponent));
+  Object.keys(groupedPoints).map((day, index) => renderDays(groupedPoints[day].points, tripDaysListComponent, groupedPoints[day].points[0].dateFrom, index + 1));
 
   console.log(Object.keys(groupedPoints));
 };

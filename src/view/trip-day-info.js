@@ -1,21 +1,23 @@
 import {createElement, helpersDate} from "../util";
 
-const createTripDayInfoTemplate = () => {
-
-
+const createTripDayInfoTemplate = (objectDate, index) => {
+  const shortDate = helpersDate.humanizeEventDate(objectDate);
+  const fullDate = helpersDate.humanizeEventDateWithoutTime(objectDate);
   return `<div class="day__info">
-    <span class="day__counter">1</span>
-    <time class="day__date" datetime="2019-03-18">MAR 18</time>
+    <span class="day__counter">${index++}</span>
+    <time class="day__date" datetime="${fullDate}">${shortDate}</time>
   </div>`;
 };
 
 export default class DaysList {
-  constructor() {
+  constructor(objectDate, index) {
+    this._objectDate = objectDate;
+    this._index = index;
     this._element = null;
   }
 
   getTemplate() {
-    return createTripDayInfoTemplate();
+    return createTripDayInfoTemplate(this._objectDate, this._index);
   }
 
   getElement() {
