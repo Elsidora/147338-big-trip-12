@@ -6,6 +6,8 @@ import SiteMenuView from "./view/site-menu";
 import FilterTitleView from "./view/filter-title";
 import FilterView from "./view/filter";
 
+import NoPointsView from "./view/no-points";
+
 import SortingView from "./view/sorting";
 import TripDaysListView from "./view/trip-days-list";
 import TripDaysItemView from "./view/trip-days-item";
@@ -19,7 +21,7 @@ import {renderElement, RenderPosition, getPointsByDays, closeElement, getDateOfF
 import {generatePointsArray} from "./mock/point";
 import {generateFilter} from "./mock/filter";
 
-const POINT_COUNT = 20;
+const POINT_COUNT = 0;
 
 const points = generatePointsArray(POINT_COUNT);
 const filters = generateFilter(points);
@@ -33,11 +35,19 @@ const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = mainElement.querySelector(`.trip-events`);
 
 const renderInfo = (renderInfoContainer) => {
+
+  const tripInfoComponent = new TripInfoView();
+  const tripCostComponent = new TripCostView();
+
+  if (!points.length) {
+    renderElement(renderInfoContainer, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
+    renderElement(tripInfoComponent.getElement(), tripCostComponent.getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
+
   const tripStartDate = points[0].dateFrom;
   const tripEndDate = points[points.length - 1].dateTo;
-  const tripInfoComponent = new TripInfoView();
   const tripRouteComponent = new TripRouteView(tripStartDate, tripEndDate);
-  const tripCostComponent = new TripCostView();
 
   renderElement(renderInfoContainer, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
   renderElement(tripInfoComponent.getElement(), tripRouteComponent.getElement(), RenderPosition.BEFOREEND);
@@ -106,6 +116,12 @@ const renderDays = (pointsArr, daysListContainer, objectDate, index) => {
 };
 
 const renderMain = () => {
+  if(!points.length) {
+    const noPointsComponent = new NoPointsView();
+
+    renderElement(tripEventsElement, noPointsComponent.getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
   const sortingComponent = new SortingView();
   const tripDaysListComponent = new TripDaysListView();
 
