@@ -1,5 +1,5 @@
 import {ACTIVITY} from '../const';
-import {shuffle, helpersDate, getTypeInOrTypeTo} from '../util';
+import {shuffle, helpersDate, getTypeInOrTypeTo, createElement} from '../util';
 
 const createItemOffersTemplate = (additionalOptions) => {
   const additionalOptionsShallow = shuffle(additionalOptions.slice());
@@ -108,3 +108,28 @@ export const createPointTemplate = (point) => {
   </li>`
   );
 };
+
+export default class Point {
+  constructor(point) {
+    this._point = point;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPointTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+

@@ -1,8 +1,59 @@
 import moment from "moment";
+import flatpickr from "flatpickr";
+
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element); // prepend вставляет элемент в начало перед первым потомком родительского элементв
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
 
 export const renderHtmlElement = (container, markupString, position) => {
   container.insertAdjacentHTML(position, markupString);
 };
+
+// Принцип работы прост:
+// 1. создаём пустой div-блок
+// 2. берём HTML в виде строки и вкладываем в этот div-блок, превращая в DOM-элемент
+// 3. возвращаем этот DOM-элемент
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`); // 1
+  newElement.innerHTML = template; // 2
+
+  return newElement.firstChild; // 3
+};
+// Единственный нюанс, что HTML в строке должен иметь общую обёртку,
+// то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
+// а не просто <a>Link 1</a><a>Link 2</a>
+
+export const getPointsByDays = (points) => {
+  const groupedPoints = {};
+
+  points.forEach((item) => {
+    const dayTitle = `${helpersDate.humanizeEventDate(item.dateFrom)}`;
+    // dayTitle - месяц, число
+
+    if (typeof groupedPoints[dayTitle] === `undefined`) {
+      groupedPoints[dayTitle] = {
+        dayTitle,
+        points: []
+      };
+    }
+    groupedPoints[dayTitle].points.push(item);
+  });
+
+  return groupedPoints; // возвращает объект массивов групп точек путешествия, распределенных по числам месяца
+};
+
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const min = Math.ceil(Math.min(a, b));
@@ -25,7 +76,6 @@ export const getTypeInOrTypeTo = (arr, type) => {
   return (arr.includes(type.toLowerCase()) ? `${type} in` : `${type} to`);
 };
 
-
 export const helpersDate = {
   humanizeEventDate: (dateObject) => dateObject.toLocaleString(`en-US`, {day: `numeric`, month: `short`}),
   humanizeEventTime: (dateObject) => dateObject.toLocaleTimeString(`en-US`, {hour12: false, hour: `2-digit`, minute: `2-digit`}),
@@ -39,7 +89,6 @@ const getCurrentDate = () => {
 
   return currentDate;
 };
-
 
 export const isPointFutureExpiringToday = (dateFrom) => {
 
@@ -55,4 +104,31 @@ export const isPointPastExpiringToday = (dateTo) => {
   return currentDate.getTime() > dateTo.getTime();
 };
 
+export const closeElement = {
+  isEscapeEvent: (evt, action) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      action();
+    }
+  },
+};
 
+const flatpickrOptions = {
+  enableTime: true,
+  // eslint-disable-next-line camelcase
+  time_24hr: true,
+  altInput: true,
+  altFormat: `d/m/y H:i`,
+  dateFormat: `d/m/y H:i`,
+  minDate: `today`,
+  onReady(selectedDates, dateStr, instance) {
+    instance._input.placeholder = instance.formatDate(new Date(), `d/m/y H:i`);
+  },
+};
+
+
+export const getDateOfForm = () => {
+  const startDateEventField = flatpickr(`#event-start-time-1`, flatpickrOptions);
+  const endDateEventField = flatpickr(`#event-end-time-1`, flatpickrOptions);
+  return (startDateEventField, endDateEventField);
+};

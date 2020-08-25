@@ -1,19 +1,16 @@
 import {createElement} from "../util";
 
-export const createTripInfoTemplate = () => {
-  return (
-    `<section class="trip-main__trip-info  trip-info">
-    </section>`
-  );
+const createDaysItemTemplate = () => {
+  return `<li class="trip-days__item day"></li>`;
 };
 
-export default class TripInfo {
+export default class DaysList {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTripInfoTemplate();
+    return createDaysItemTemplate();
   }
 
   getElement() {

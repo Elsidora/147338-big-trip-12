@@ -1,5 +1,5 @@
 import {TRANSFER, ACTIVITY} from "../const";
-import {getTypeInOrTypeTo} from '../util';
+import {getTypeInOrTypeTo, createElement} from '../util';
 import {getPointDetailsTemplate} from './point-details';
 
 const getItemTypeTemplate = (arr) => {
@@ -10,17 +10,29 @@ const getItemTypeTemplate = (arr) => {
   ).join(``);
 };
 
-export const createFormEditTemplate = (point = {}) => {
+const BLANK_POINT = {
+  type: `bus`,
+  typeTitle: `Bus`,
+  cityName: `Paris`,
+  additionalOptions: [],
+  price: ``,
+  infoDestination: {
+    description: ``,
+    pictures: [],
+  },
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  isFavorite: false,
+};
+
+const createPointEditTemplate = (point = {}) => {
   const {
-    type = `bus`,
-    typeTitle = `Bus`,
-    cityName = `Paris`,
-    additionalOptions = [],
-    price = ``,
-    infoDestination = {
-      description: ``,
-      pictures: [],
-    },
+    type,
+    typeTitle,
+    cityName,
+    additionalOptions,
+    infoDestination,
+    price,
   } = point;
   const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
 
@@ -102,3 +114,26 @@ export const createFormEditTemplate = (point = {}) => {
   </form>`
   );
 };
+
+export default class PointEdit {
+  constructor(point = BLANK_POINT) {
+    this._point = point;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPointEditTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

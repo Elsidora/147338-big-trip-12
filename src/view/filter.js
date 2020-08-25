@@ -1,3 +1,5 @@
+import {createElement} from "../util";
+
 const createFilterItemTemplate = (filter, isChecked) => {
   const {name} = filter;
   return (
@@ -19,15 +21,37 @@ const createFilterItemTemplate = (filter, isChecked) => {
   );
 };
 
-export const createFilterTemplate = (filterItems) => {
+const createFilterTemplate = (filterItems) => {
   const filterItemsTemplate = filterItems
     .map((filter, index) => createFilterItemTemplate(filter, index === 0))
     .join(``);
   return (
-    `<h2 class="visually-hidden">Filter events</h2>
-    <form class="trip-filters" action="#" method="get">
+    `<form class="trip-filters" action="#" method="get">
       ${filterItemsTemplate}
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>`
   );
 };
+
+export default class Filter {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null; // вызываем конструктор, в котором происходит инициализация приватного свойства _element со значением null
+  }
+
+  getTemplate() {
+    return createFilterTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
