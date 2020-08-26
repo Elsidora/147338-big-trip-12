@@ -1,4 +1,5 @@
-import {createElement} from "../util";
+import AbstractView from "./abstract";
+
 
 const createFilterItemTemplate = (filter, isChecked) => {
   const {name} = filter;
@@ -33,25 +34,13 @@ const createFilterTemplate = (filterItems) => {
   );
 };
 
-export default class Filter {
+export default class Filter extends AbstractView {
   constructor(filters) {
+    super();
     this._filters = filters;
-    this._element = null; // вызываем конструктор, в котором происходит инициализация приватного свойства _element со значением null
   }
 
   getTemplate() {
     return createFilterTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

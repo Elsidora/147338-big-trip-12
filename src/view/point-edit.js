@@ -1,5 +1,6 @@
+import AbstractView from "./abstract";
 import {TRANSFER, ACTIVITY} from "../const";
-import {getTypeInOrTypeTo, createElement} from '../util';
+import {getTypeInOrTypeTo} from '../util';
 import {getPointDetailsTemplate} from './point-details';
 
 const getItemTypeTemplate = (arr) => {
@@ -115,25 +116,13 @@ const createPointEditTemplate = (point = {}) => {
   );
 };
 
-export default class PointEdit {
+export default class PointEdit extends AbstractView {
   constructor(point = BLANK_POINT) {
+    super();
     this._point = point;
-    this._element = null;
   }
 
   getTemplate() {
     return createPointEditTemplate(this._point);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,4 +1,5 @@
-import {createElement, helpersDate} from "../util";
+import AbstractView from "./abstract";
+import {helpersDate} from "../util";
 
 const createTripDayInfoTemplate = (objectDate, index) => {
   const shortDate = helpersDate.humanizeEventDate(objectDate);
@@ -9,26 +10,14 @@ const createTripDayInfoTemplate = (objectDate, index) => {
   </div>`;
 };
 
-export default class DaysList {
+export default class DaysList extends AbstractView {
   constructor(objectDate, index) {
+    super();
     this._objectDate = objectDate;
     this._index = index;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripDayInfoTemplate(this._objectDate, this._index);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

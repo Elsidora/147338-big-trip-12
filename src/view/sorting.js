@@ -1,4 +1,4 @@
-import {createElement} from "../util";
+import AbstractView from "./abstract";
 
 const createSortingTemplate = () => {
   return (
@@ -35,25 +35,10 @@ const createSortingTemplate = () => {
   );
 };
 
-export default class Sorting {
-  constructor() {
-    this._element = null; // вызываем конструктор, в котором происходит инициализация приватного свойства _element со значением null
-  }
+export default class Sorting extends AbstractView {
 
   getTemplate() {
     return createSortingTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
