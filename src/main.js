@@ -86,18 +86,17 @@ const renderPoint = (pointContainer, point) => {
     closeElement.isEscapeEvent(evt, closeFormEditPoint);
   };
 
-  pointComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  pointComponent.setEditClickHandler(() => {
     replacePointToForm();
     getDateOfForm();
     document.addEventListener(`keydown`, onEscapePress);
   });
 
-  pointEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  pointEditComponent.setPointClickHandler(() => {
     closeFormEditPoint();
   });
 
-  pointEditComponent.getElement().addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  pointEditComponent.setFormSubmitHandler(() => {
     closeFormEditPoint();
   });
 
