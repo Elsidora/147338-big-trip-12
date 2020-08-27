@@ -1,6 +1,6 @@
 import AbstractView from "./abstract";
 import {TRANSFER, ACTIVITY} from "../const";
-import {getTypeInOrTypeTo} from '../util';
+import {getTypeInOrTypeTo} from '../utils/helper';
 import {getPointDetailsTemplate} from './point-details';
 
 const getItemTypeTemplate = (arr) => {

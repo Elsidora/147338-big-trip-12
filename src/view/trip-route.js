@@ -1,6 +1,6 @@
 import AbstractView from "./abstract";
 import {CITIES} from '../const';
-import {helpersDate} from '../util';
+import {helpersDate} from '../utils/point';
 
 const compareTripDates = (start, end) => {
   const startMonth = start.getMonth();

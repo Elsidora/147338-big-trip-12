@@ -1,5 +1,5 @@
 import {PRICE, CITIES, TRANSFER, ACTIVITY, OFFERSAVAILABLE} from "../const";
-import {getRandomInteger, shuffle, getRandomBoolean} from "../util";
+import {getRandomInteger, shuffle, getRandomBoolean} from "../utils/common";
 
 const Count = {
   MIN: 1,

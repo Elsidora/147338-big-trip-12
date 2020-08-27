@@ -1,6 +1,8 @@
 import AbstractView from "./abstract";
 import {ACTIVITY} from '../const';
-import {shuffle, helpersDate, getTypeInOrTypeTo} from '../util';
+import {shuffle} from '../utils/common';
+import {helpersDate} from '../utils/point';
+import {getTypeInOrTypeTo} from '../utils/helper';
 
 const createItemOffersTemplate = (additionalOptions) => {
   const additionalOptionsShallow = shuffle(additionalOptions.slice());

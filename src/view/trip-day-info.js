@@ -1,5 +1,5 @@
 import AbstractView from "./abstract";
-import {helpersDate} from "../util";
+import {helpersDate} from "../utils/point";
 
 const createTripDayInfoTemplate = (objectDate, index) => {
   const shortDate = helpersDate.humanizeEventDate(objectDate);

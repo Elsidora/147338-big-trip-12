@@ -1,4 +1,5 @@
 import AbstractView from "./abstract";
+import {createElement} from "../utils/render";
 
 
 const createFilterItemTemplate = (filter, isChecked) => {
@@ -22,6 +23,10 @@ const createFilterItemTemplate = (filter, isChecked) => {
   );
 };
 
+const createTitleFilterTemplate = () => {
+  return `<h2 class="visually-hidden">Filter events</h2>`;
+};
+
 const createFilterTemplate = (filterItems) => {
   const filterItemsTemplate = filterItems
     .map((filter, index) => createFilterItemTemplate(filter, index === 0))
@@ -38,9 +43,22 @@ export default class Filter extends AbstractView {
   constructor(filters) {
     super();
     this._filters = filters;
+    this._titleFilter = null;
+  }
+
+  _getTitleFilterTemplate() {
+    return createTitleFilterTemplate();
   }
 
   getTemplate() {
     return createFilterTemplate(this._filters);
+  }
+
+  getTitleFilterElement() {
+    if (!this._titleFilter) {
+      this._titleFilter = createElement(this._getTitleFilterTemplate());
+    }
+
+    return this._titleFilter;
   }
 }
