@@ -9,30 +9,73 @@ import TripPointsListView from "../view/trip-points-list";
 import PointView from "../view/point";
 import PointEditView from "../view/point-edit";
 
-import {renderElement, RenderPosition, replace} from "../utils/render";
+import {renderElement, RenderPosition, replace, remove} from "../utils/render";
 import {closeElement} from "../utils/helper";
-import {getDateOfForm, getPointsByDays} from "../utils/point";
+import {getDateOfForm, getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
+import {SortType} from "../const";
 
 export default class Events {
   constructor(eventsContainer) {
     this._eventsContainer = eventsContainer;
+    this._currentSortType = SortType.EVENT;
     this._sortingComponent = new SortingView();
     this._tripDaysListComponent = new TripDaysListView();
     this._noPointsComponent = new NoPointsView();
+
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
   }
 
   init(eventsPoints) {
     this._eventsPoints = eventsPoints.slice();
 
+    this._sourcedEventsPoints = eventsPoints.slice(); // копия точек для сортировки
+
     this._renderEvents();
+  }
+
+  _sortPoints(sortType) {
+
+    switch (sortType) {
+      case SortType.TIME:
+        this._eventsPoints.sort(sortTimeDown);
+        break;
+      case SortType.PRICE:
+        this._eventsPoints.sort(sortPriceDown);
+        break;
+      default:
+        this._eventsPoints = this._sourcedEventsPoints.slice();
+    }
+
+    this._currentSortType = sortType;
+
+  }
+
+  _handleSortTypeChange(sortType) {
+
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortPoints(sortType);
+    this._clearDaysList();
+    this._renderDaysList();
+
+    const itemDay = this._sortingComponent.getElement().querySelector(`.trip-sort__item--day`);
+    if (this._currentSortType !== SortType.EVENT) {
+      itemDay.textContent = ``;
+    } else {
+      itemDay.textContent = `DAY`;
+    }
+  }
+
+  _clearDaysList() {
+    remove(this._tripDaysListComponent);
   }
 
   _renderSort() {
     renderElement(this._eventsContainer, this._sortingComponent, RenderPosition.BEFOREEND);
-  }
 
-  _renderDaysList() {
-    renderElement(this._eventsContainer, this._tripDaysListComponent, RenderPosition.BEFOREEND);
+    this._sortingComponent.setSortTypeChangeHandler(this._handleSortTypeChange); // добавляем прослушивание обработчика события
   }
 
   _renderPoint(pointContainer, point) {
@@ -78,6 +121,10 @@ export default class Events {
     const tripDayInfoComponent = new TripDayInfoView(objectDate, index);
     const tripPointsListComponent = new TripPointsListView();
 
+    if (this._currentSortType !== SortType.EVENT) {
+      tripDayInfoComponent.getElement().innerHTML = ``;
+    }
+
     renderElement(this._tripDaysListComponent, tripDaysItemComponent, RenderPosition.BEFOREEND);
     renderElement(tripDaysItemComponent, tripDayInfoComponent, RenderPosition.BEFOREEND);
     renderElement(tripDaysItemComponent, tripPointsListComponent, RenderPosition.BEFOREEND);
@@ -88,8 +135,23 @@ export default class Events {
     renderElement(this._eventsContainer, this._noPointsComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderEvents() {
+  _renderDaysList() {
     const groupedPoints = getPointsByDays(this._eventsPoints);
+    renderElement(this._eventsContainer, this._tripDaysListComponent, RenderPosition.BEFOREEND);
+
+    if (this._currentSortType !== SortType.EVENT) {
+      const objectDate = ``;
+      const index = ``;
+      this._renderDays(this._eventsPoints, objectDate, index);
+
+    } else {
+      Object.keys(groupedPoints).map((day, index) => this._renderDays(groupedPoints[day].points, groupedPoints[day].points[0].dateFrom, index + 1));
+    }
+  }
+
+
+  _renderEvents() {
+
     if (!this._eventsPoints.length) {
       this._renderNoPoints();
       return;
@@ -97,6 +159,5 @@ export default class Events {
 
     this._renderSort();
     this._renderDaysList();
-    Object.keys(groupedPoints).map((day, index) => this._renderDays(groupedPoints[day].points, groupedPoints[day].points[0].dateFrom, index + 1));
   }
 }

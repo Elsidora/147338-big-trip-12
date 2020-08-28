@@ -67,3 +67,40 @@ export const getDateOfForm = () => {
   const endDateEventField = flatpickr(`#event-end-time-1`, flatpickrOptions);
   return (startDateEventField, endDateEventField);
 };
+
+const getWeightForNullDate = (dateA, dateB) => {
+  if (dateA === null && dateB === null) {
+    return 0;
+  }
+
+  if (dateA === null) {
+    return 1;
+  }
+
+  if (dateB === null) {
+    return -1;
+  }
+
+  return null;
+};
+
+export const sortPriceDown = (pointA, pointB) => {
+  const weight = getWeightForNullDate(pointA.price, pointB.price);
+
+  if (weight !== null) {
+    return weight;
+  }
+
+  return pointB.price - pointA.price;
+};
+
+export const sortTimeDown = (pointA, pointB) => {
+  const weight = getWeightForNullDate(pointB.dateTo.getTime() - pointB.dateFrom.getTime(), pointA.dateTo.getTime() - pointA.dateFrom.getTime());
+
+  if (weight !== null) {
+    return weight;
+  }
+
+  return (pointB.dateTo.getTime() - pointB.dateFrom.getTime()) - (pointA.dateTo.getTime() - pointA.dateFrom.getTime());
+};
+
