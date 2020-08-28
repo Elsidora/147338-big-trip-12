@@ -68,16 +68,16 @@ export const getDateOfForm = () => {
   return (startDateEventField, endDateEventField);
 };
 
-const getWeightForNullDate = (dateA, dateB) => {
-  if (dateA === null && dateB === null) {
+const getWeightForNullItem = (a, b) => {
+  if (a === null && b === null) {
     return 0;
   }
 
-  if (dateA === null) {
+  if (a === null) {
     return 1;
   }
 
-  if (dateB === null) {
+  if (b === null) {
     return -1;
   }
 
@@ -85,7 +85,7 @@ const getWeightForNullDate = (dateA, dateB) => {
 };
 
 export const sortPriceDown = (pointA, pointB) => {
-  const weight = getWeightForNullDate(pointA.price, pointB.price);
+  const weight = getWeightForNullItem(pointA.price, pointB.price);
 
   if (weight !== null) {
     return weight;
@@ -95,12 +95,14 @@ export const sortPriceDown = (pointA, pointB) => {
 };
 
 export const sortTimeDown = (pointA, pointB) => {
-  const weight = getWeightForNullDate(pointB.dateTo.getTime() - pointB.dateFrom.getTime(), pointA.dateTo.getTime() - pointA.dateFrom.getTime());
+  const durationA = pointA.dateTo.getTime() - pointA.dateFrom.getTime();
+  const durationB = pointB.dateTo.getTime() - pointB.dateFrom.getTime();
+  const weight = getWeightForNullItem(durationA, durationB);
 
   if (weight !== null) {
     return weight;
   }
 
-  return (pointB.dateTo.getTime() - pointB.dateFrom.getTime()) - (pointA.dateTo.getTime() - pointA.dateFrom.getTime());
+  return durationB - durationA;
 };
 
