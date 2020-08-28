@@ -49,15 +49,16 @@ export default class Sorting extends AbstractView {
   }
 
   _sortTypeChangeHandler(evt) {
-    if (!evt.target.classList.contains(`trip-sort__input`)) {
+    if (evt.target.tagName !== `LABEL`) {
       return;
     }
 
     evt.preventDefault();
-    this._callback.sortTypeChange(evt.target.id);
+    this._callback.sortTypeChange(evt.target.htmlFor);
 
-    // console.log(123);
+    evt.target.parentElement.querySelector(`input`).checked = true;
   }
+
 
   setSortTypeChangeHandler(callback) {
     this._callback.sortTypeChange = callback;
