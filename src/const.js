@@ -46,3 +46,9 @@ export const OFFERSAVAILABLE = [
     price: 8,
   }
 ];
+
+export const SortType = {
+  EVENT: `sort-event`,
+  TIME: `sort-time`,
+  PRICE: `sort-price`
+};

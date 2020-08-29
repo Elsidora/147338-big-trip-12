@@ -1,5 +1,6 @@
+import AbstractView from "./abstract";
 import {TRANSFER, ACTIVITY} from "../const";
-import {getTypeInOrTypeTo, createElement} from '../util';
+import {getTypeInOrTypeTo} from '../utils/helper';
 import {getPointDetailsTemplate} from './point-details';
 
 const getItemTypeTemplate = (arr) => {
@@ -115,25 +116,36 @@ const createPointEditTemplate = (point = {}) => {
   );
 };
 
-export default class PointEdit {
+export default class PointEdit extends AbstractView {
   constructor(point = BLANK_POINT) {
+    super();
     this._point = point;
-    this._element = null;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._pointClickHandler = this._pointClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPointEditTemplate(this._point);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  _pointClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.pointClick();
+  }
+
+  setPointClickHandler(callback) {
+    this._callback.pointClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._pointClickHandler);
   }
 }

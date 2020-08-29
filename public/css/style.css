@@ -458,7 +458,7 @@ main {
       position: relative;
       color: #000000;
       border-color: #000000; }
-      .trip-sort__input:checked +  .trip-sort__btn::before {
+      .trip-sort__input:checked + .trip-sort__btn::before {
       content: "";
       position: absolute;
       top: 50%;

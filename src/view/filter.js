@@ -1,4 +1,6 @@
-import {createElement} from "../util";
+import AbstractView from "./abstract";
+import {createElement} from "../utils/render";
+
 
 const createFilterItemTemplate = (filter, isChecked) => {
   const {name} = filter;
@@ -21,6 +23,10 @@ const createFilterItemTemplate = (filter, isChecked) => {
   );
 };
 
+const createTitleFilterTemplate = () => {
+  return `<h2 class="visually-hidden">Filter events</h2>`;
+};
+
 const createFilterTemplate = (filterItems) => {
   const filterItemsTemplate = filterItems
     .map((filter, index) => createFilterItemTemplate(filter, index === 0))
@@ -33,25 +39,26 @@ const createFilterTemplate = (filterItems) => {
   );
 };
 
-export default class Filter {
+export default class Filter extends AbstractView {
   constructor(filters) {
+    super();
     this._filters = filters;
-    this._element = null; // вызываем конструктор, в котором происходит инициализация приватного свойства _element со значением null
+    this._titleFilter = null;
+  }
+
+  _getTitleFilterTemplate() {
+    return createTitleFilterTemplate();
   }
 
   getTemplate() {
     return createFilterTemplate(this._filters);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
+  getTitleFilterElement() {
+    if (!this._titleFilter) {
+      this._titleFilter = createElement(this._getTitleFilterTemplate());
     }
 
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return this._titleFilter;
   }
 }

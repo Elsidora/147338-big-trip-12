@@ -1,5 +1,6 @@
+import AbstractView from "./abstract";
 import {CITIES} from '../const';
-import {helpersDate, createElement} from '../util';
+import {helpersDate} from '../utils/point';
 
 const compareTripDates = (start, end) => {
   const startMonth = start.getMonth();
@@ -42,26 +43,14 @@ const createTripRouteTemplate = (startTrip, endTrip) => {
   );
 };
 
-export default class TripRoute {
+export default class TripRoute extends AbstractView {
   constructor(startTrip, endTrip) {
+    super();
     this._startTrip = startTrip;
     this._endTrip = endTrip;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripRouteTemplate(this._startTrip, this._endTrip);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
