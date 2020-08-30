@@ -1,3 +1,5 @@
+import PointPresenter from "./point";
+
 import NoPointsView from "../view/no-points";
 
 import SortingView from "../view/sorting";
@@ -6,12 +8,8 @@ import TripDaysItemView from "../view/trip-days-item";
 import TripDayInfoView from "../view/trip-day-info";
 import TripPointsListView from "../view/trip-points-list";
 
-import PointView from "../view/point";
-import PointEditView from "../view/point-edit";
-
-import {renderElement, RenderPosition, replace, remove} from "../utils/render";
-import {closeElement} from "../utils/helper";
-import {getDateOfForm, getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
+import {renderElement, RenderPosition, remove} from "../utils/render";
+import {getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
 import {SortType} from "../const";
 
 export default class Events {
@@ -79,41 +77,8 @@ export default class Events {
   }
 
   _renderPoint(pointContainer, point) {
-    const pointComponent = new PointView(point);
-    const pointEditComponent = new PointEditView(point);
-
-    const replacePointToForm = () => {
-      replace(pointEditComponent, pointComponent);
-    };
-
-    const replaceFormToPoint = () => {
-      replace(pointComponent, pointEditComponent);
-    };
-
-    const closeFormEditPoint = () => {
-      replaceFormToPoint();
-      document.removeEventListener(`keydown`, onEscapePress);
-    };
-
-    const onEscapePress = (evt) => {
-      closeElement.isEscapeEvent(evt, closeFormEditPoint);
-    };
-
-    pointComponent.setEditClickHandler(() => {
-      replacePointToForm();
-      getDateOfForm();
-      document.addEventListener(`keydown`, onEscapePress);
-    });
-
-    pointEditComponent.setPointClickHandler(() => {
-      closeFormEditPoint();
-    });
-
-    pointEditComponent.setFormSubmitHandler(() => {
-      closeFormEditPoint();
-    });
-
-    renderElement(pointContainer, pointComponent, RenderPosition.BEFOREEND);
+    const pointPresenter = new PointPresenter(pointContainer);
+    pointPresenter.init(point);
   }
 
   _renderDays(pointsArr, objectDate, index) {
