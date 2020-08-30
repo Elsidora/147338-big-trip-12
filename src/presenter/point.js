@@ -23,6 +23,10 @@ export default class Point {
   init(point) {
     this._point = point;
 
+    // переменные для запоминания предыдущих компонентов
+    const prevPointComponent = this._pointComponent;
+    const prevPointEditComponent = this._pointEditComponent;
+
     this._pointComponent = new PointView(point);
     this._pointEditComponent = new PointEditView(point);
 
@@ -30,9 +34,36 @@ export default class Point {
     this._pointEditComponent.setPointClickHandler(this._handlePointClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
-    renderElement(this._pointListContainer, this._pointComponent, RenderPosition.BEFOREEND);
+    // Добавим возможность повторно инициализировать презентер точки путешествия.
+    // Для этого в методе init будем запоминать предыдущие компоненты.
+    // Если они null, то есть не создавались, рендерим как раньше.
+    // Если они отличны от null, то есть создавались, то заменяем их новыми и удаляем
+    if (prevPointComponent === null || prevPointEditComponent === null) {
+      renderElement(this._pointListContainer, this._pointComponent, RenderPosition.BEFOREEND);
+      return;
+    }
 
+    // Проверка на наличие в DOM необходима,
+    // чтобы не пытаться заменить то, что не было отрисовано
+    if (this._pointListContainer.getElement().contains(prevPointComponent.getElement())) {
+      replace(this._pointComponent, prevPointComponent);
+    }
+
+    if (this._pointListContainer.getElement().contains(prevPointEditComponent.getElement())) {
+      replace(this._pointEditComponent, prevPointEditComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
+
+    renderElement(this._pointListContainer, this._pointComponent, RenderPosition.BEFOREEND);
   }
+
+  destroy() {
+    remove(this._pointComponent);
+    remove(this._pointEditComponent);
+  }
+
 
   _replacePointToForm() {
     replace(this._pointEditComponent, this._pointComponent);
