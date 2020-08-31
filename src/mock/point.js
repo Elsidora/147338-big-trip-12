@@ -6,6 +6,7 @@ const Count = {
   MAX: 5,
 };
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 const startDay = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000); // Путешествия началось за три дня до текущей даты. (Date.now() - возвращает кол-во миллисек. текущей даты)
 const startDayTimestamp = startDay.getTime(); // предполагаемое время начала путешествия (getTime() возвращает числовое значение указанной даты в виде количества миллисекунд, прошедших с 00:00:00 1 января 1970 года по UTC)
 const maxDurationDays = 6; // максимальное количество дней продолжительности путешествия
@@ -51,6 +52,7 @@ const generatePointOfRoute = () => {
 
 
   return {
+    id: generateId(),
     type,
     typeTitle,
     cityName: generateCityName(),

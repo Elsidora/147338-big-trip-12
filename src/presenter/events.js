@@ -16,6 +16,9 @@ export default class Events {
   constructor(eventsContainer) {
     this._eventsContainer = eventsContainer;
     this._currentSortType = SortType.EVENT;
+    this._arrPointPresenter = [];
+    this._pointPresenter = {};
+
     this._sortingComponent = new SortingView();
     this._tripDaysListComponent = new TripDaysListView();
     this._noPointsComponent = new NoPointsView();
@@ -59,15 +62,27 @@ export default class Events {
     this._renderDaysList();
 
     const itemDay = this._sortingComponent.getElement().querySelector(`.trip-sort__item--day`);
-    if (this._currentSortType !== SortType.EVENT) {
-      itemDay.textContent = ``;
-    } else {
-      itemDay.textContent = `DAY`;
-    }
+    itemDay.textContent = this._currentSortType !== SortType.EVENT ? `` : `DAY`;
   }
 
   _clearDaysList() {
-    remove(this._tripDaysListComponent);
+    if (this._currentSortType !== SortType.EVENT) {
+
+      Object
+        .values(this._pointPresenter)
+        .forEach((presenter) => presenter.destroy());
+      this._pointPresenter = {};
+      remove(this._tripDaysListComponent);
+    } else {
+      this._arrPointPresenter.forEach((item) => {
+        Object
+        .values(item)
+        .forEach((presenter) => presenter.destroy());
+        this._pointPresenter = {};
+      })
+      this._arrPointPresenter = [];
+      remove(this._tripDaysListComponent);
+    }
   }
 
   _renderSort() {
@@ -79,6 +94,7 @@ export default class Events {
   _renderPoint(pointContainer, point) {
     const pointPresenter = new PointPresenter(pointContainer);
     pointPresenter.init(point);
+    this._pointPresenter[point.id] = pointPresenter;
   }
 
   _renderDays(pointsArr, objectDate, index) {
@@ -94,6 +110,8 @@ export default class Events {
     renderElement(tripDaysItemComponent, tripDayInfoComponent, RenderPosition.BEFOREEND);
     renderElement(tripDaysItemComponent, tripPointsListComponent, RenderPosition.BEFOREEND);
     pointsArr.map((point) => this._renderPoint(tripPointsListComponent, point));
+    this._arrPointPresenter.push(this._pointPresenter);
+    console.log(this._arrPointPresenter);
   }
 
   _renderNoPoints() {
@@ -101,7 +119,7 @@ export default class Events {
   }
 
   _renderDaysList() {
-    const groupedPoints = getPointsByDays(this._eventsPoints);
+
     renderElement(this._eventsContainer, this._tripDaysListComponent, RenderPosition.BEFOREEND);
 
     if (this._currentSortType !== SortType.EVENT) {
@@ -110,6 +128,7 @@ export default class Events {
       this._renderDays(this._eventsPoints, objectDate, index);
 
     } else {
+      const groupedPoints = getPointsByDays(this._eventsPoints);
       Object.keys(groupedPoints).map((day, index) => this._renderDays(groupedPoints[day].points, groupedPoints[day].points[0].dateFrom, index + 1));
     }
   }
