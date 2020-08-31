@@ -10,6 +10,7 @@ import TripPointsListView from "../view/trip-points-list";
 
 import {renderElement, RenderPosition, remove} from "../utils/render";
 import {getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
+import {updateItem} from "../utils/common";
 import {SortType} from "../const";
 
 export default class Events {
@@ -23,6 +24,7 @@ export default class Events {
     this._tripDaysListComponent = new TripDaysListView();
     this._noPointsComponent = new NoPointsView();
 
+    this._handlePointChange = this._handlePointChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
   }
 
@@ -32,6 +34,12 @@ export default class Events {
     this._sourcedEventsPoints = eventsPoints.slice(); // копия точек для сортировки
 
     this._renderEvents();
+  }
+
+  _handlePointChange(updatedPoint) {
+    this._eventsPoints = updateItem(this._eventsPoints, updatedPoint);
+    this._sourcedEventsPoints = updateItem(this._sourcedEventsPoints, updatedPoint);
+    this._taskPresenter[updatedPoint.id].init(updatedPoint);
   }
 
   _sortPoints(sortType) {
