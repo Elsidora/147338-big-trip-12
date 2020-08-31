@@ -39,7 +39,7 @@ export default class Events {
   _handlePointChange(updatedPoint) {
     this._eventsPoints = updateItem(this._eventsPoints, updatedPoint);
     this._sourcedEventsPoints = updateItem(this._sourcedEventsPoints, updatedPoint);
-    this._taskPresenter[updatedPoint.id].init(updatedPoint);
+    this._pointPresenter[updatedPoint.id].init(updatedPoint);
   }
 
   _sortPoints(sortType) {
@@ -100,7 +100,7 @@ export default class Events {
   }
 
   _renderPoint(pointContainer, point) {
-    const pointPresenter = new PointPresenter(pointContainer);
+    const pointPresenter = new PointPresenter(pointContainer, this._handlePointChange);
     pointPresenter.init(point);
     this._pointPresenter[point.id] = pointPresenter;
   }
