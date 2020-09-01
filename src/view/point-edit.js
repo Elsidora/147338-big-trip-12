@@ -125,6 +125,7 @@ export default class PointEdit extends AbstractView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._pointClickHandler = this._pointClickHandler.bind(this);
     this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
 
     this._setInnerHandlers();
 
@@ -134,7 +135,7 @@ export default class PointEdit extends AbstractView {
     return createPointEditTemplate(this._data);
   }
 
-  updateData(update) {
+  updateData(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -144,6 +145,10 @@ export default class PointEdit extends AbstractView {
         this._data,
         update
     );
+
+    if (justDataUpdating) {
+      return;
+    }
 
     this.updateElement();
   }
@@ -170,6 +175,9 @@ export default class PointEdit extends AbstractView {
     this.getElement()
       .querySelector(`.event__favorite-btn`)
       .addEventListener(`click`, this._favoriteToggleHandler);
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`input`, this._priceInputHandler);
   }
 
   _favoriteToggleHandler(evt) {
@@ -178,6 +186,14 @@ export default class PointEdit extends AbstractView {
       isFavorite: !this._data.isFavorite
     });
   }
+
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      price: evt.target.value
+    }, true);
+  }
+
 
   _pointClickHandler(evt) {
     evt.preventDefault();
