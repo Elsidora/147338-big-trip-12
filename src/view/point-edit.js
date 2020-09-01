@@ -125,9 +125,9 @@ export default class PointEdit extends AbstractView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._pointClickHandler = this._pointClickHandler.bind(this);
     this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
-    this.getElement()
-      .querySelector(`.event__favorite-btn`)
-      .addEventListener(`click`, this._favoriteToggleHandler);
+
+    this._setInnerHandlers();
+
   }
 
   getTemplate() {
@@ -157,12 +157,25 @@ export default class PointEdit extends AbstractView {
 
     parent.replaceChild(newElement, prevElement);
     prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
+
+    this.restoreHandlers();
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, this._favoriteToggleHandler);
   }
 
   _favoriteToggleHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      isDueDate: !this._data.isDueDate
+      isFavorite: !this._data.isFavorite
     });
   }
 

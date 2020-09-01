@@ -35,7 +35,7 @@ export default class Point {
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._pointEditComponent.setPointClickHandler(this._handlePointClick);
-    this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    // this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
     // Добавим возможность повторно инициализировать презентер точки путешествия.
