@@ -87,7 +87,7 @@ export default class Events {
         .values(item)
         .forEach((presenter) => presenter.destroy());
         this._pointPresenter = {};
-      })
+      });
       this._arrPointPresenter = [];
       remove(this._tripDaysListComponent);
     }
@@ -119,7 +119,6 @@ export default class Events {
     renderElement(tripDaysItemComponent, tripPointsListComponent, RenderPosition.BEFOREEND);
     pointsArr.map((point) => this._renderPoint(tripPointsListComponent, point));
     this._arrPointPresenter.push(this._pointPresenter);
-    console.log(this._arrPointPresenter);
   }
 
   _renderNoPoints() {

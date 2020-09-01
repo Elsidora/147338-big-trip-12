@@ -26,7 +26,7 @@ const BLANK_POINT = {
   isFavorite: false,
 };
 
-const createPointEditTemplate = (point = {}) => {
+const createPointEditTemplate = (data) => {
   const {
     type,
     typeTitle,
@@ -34,7 +34,8 @@ const createPointEditTemplate = (point = {}) => {
     additionalOptions,
     infoDestination,
     price,
-  } = point;
+    isFavorite
+  } = data;
   const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
 
   const itemTransferTemplate = getItemTypeTemplate(TRANSFER);
@@ -99,7 +100,7 @@ const createPointEditTemplate = (point = {}) => {
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
 
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite">
+      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite === true ? `checked` : ``}>
       <label class="event__favorite-btn" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -119,7 +120,7 @@ const createPointEditTemplate = (point = {}) => {
 export default class PointEdit extends AbstractView {
   constructor(point = BLANK_POINT) {
     super();
-    this._point = point;
+    this._data = PointEdit.parsePointToData(point);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._pointClickHandler = this._pointClickHandler.bind(this);
@@ -127,7 +128,7 @@ export default class PointEdit extends AbstractView {
   }
 
   getTemplate() {
-    return createPointEditTemplate(this._point);
+    return createPointEditTemplate(this._data);
   }
 
   _pointClickHandler(evt) {
@@ -152,11 +153,25 @@ export default class PointEdit extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._point);
+    this._callback.formSubmit(this._data);
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  static parsePointToData(point) {
+    return Object.assign({}, point);
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    if (data.isFavorite) {
+      data.isFavorite = true;
+    }
+
+    return data;
   }
 }
