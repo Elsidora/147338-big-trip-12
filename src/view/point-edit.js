@@ -1,20 +1,21 @@
 import AbstractView from "./abstract";
 import {TRANSFER, ACTIVITY} from "../const";
-import {getTypeInOrTypeTo} from '../utils/helper';
 import {getPointDetailsTemplate} from './point-details';
 
-const getItemTypeTemplate = (arr) => {
+const types = TRANSFER.concat(ACTIVITY);
+
+const getItemTypeTemplate = (arr, checkedType) => {
   return arr.map((type) => `<div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checkedType === type ? ` checked` : ``}>
     <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
     </div>`
   ).join(``);
 };
 
 const BLANK_POINT = {
-  type: `bus`,
-  typeTitle: `Bus`,
-  cityName: `Paris`,
+  type: ``,
+  typeTitle: ``,
+  cityName: ``,
   additionalOptions: [],
   price: ``,
   infoDestination: {
@@ -29,18 +30,19 @@ const BLANK_POINT = {
 const createPointEditTemplate = (data) => {
   const {
     type,
-    typeTitle,
     cityName,
     additionalOptions,
     infoDestination,
     price,
     isFavorite
   } = data;
-  const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
 
-  const itemTransferTemplate = getItemTypeTemplate(TRANSFER);
-  const itemActivityTemplate = getItemTypeTemplate(ACTIVITY);
-  const instructionForType = getTypeInOrTypeTo(ACTIVITY, typeTitle);
+  const typeTitle = type[0].toUpperCase() + type.slice(1);
+  const toOrIn = TRANSFER.includes(type) ? `to` : `in`;
+
+  const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
+  const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type);
+  const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type);
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
     <header class="event__header">
@@ -66,7 +68,7 @@ const createPointEditTemplate = (data) => {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${instructionForType}
+          ${typeTitle} ${toOrIn}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityName}" list="destination-list-1">
         <datalist id="destination-list-1">
@@ -126,6 +128,7 @@ export default class PointEdit extends AbstractView {
     this._pointClickHandler = this._pointClickHandler.bind(this);
     this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._typeClickHandler = this._typeClickHandler.bind(this);
 
     this._setInnerHandlers();
 
@@ -178,6 +181,9 @@ export default class PointEdit extends AbstractView {
     this.getElement()
       .querySelector(`.event__input--price`)
       .addEventListener(`input`, this._priceInputHandler);
+    this.getElement()
+      .querySelector(`.event__type-list`)
+      .addEventListener(`change`, this._typeClickHandler);
   }
 
   _favoriteToggleHandler(evt) {
@@ -194,16 +200,11 @@ export default class PointEdit extends AbstractView {
     }, true);
   }
 
-
   _pointClickHandler(evt) {
     evt.preventDefault();
     this._callback.pointClick();
   }
 
-  setPointClickHandler(callback) {
-    this._callback.pointClick = callback;
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._pointClickHandler);
-  }
 
   /*
   _favoriteClickHandler(evt) {
@@ -229,13 +230,28 @@ export default class PointEdit extends AbstractView {
     this._callback.formSubmit(this._data);
   }
 
+  _typeClickHandler(evt) {
+    evt.preventDefault();
+    this._data.type = types.filter((item) => item === evt.target.value);
+    this._data.additionalOptions = this._data.additionalOptions;
+    this.updateData({
+      type: this._data.type[0],
+      additionalOptions: this._data.additionalOptions
+    });
+  }
+
+  setPointClickHandler(callback) {
+    this._callback.pointClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._pointClickHandler);
+  }
+
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  static parsePointToData(point) {
-    return Object.assign({}, point);
+  static parsePointToData(data) {
+    return Object.assign({}, data);
   }
 
   static parseDataToPoint(data) {
