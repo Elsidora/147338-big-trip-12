@@ -5,13 +5,20 @@ import {renderElement, RenderPosition, replace, remove} from "../utils/render";
 import {getDateOfForm} from "../utils/point";
 import {closeElement} from "../utils/helper";
 
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`
+};
+
 export default class Point {
-  constructor(pointListContainer, changeData) {
+  constructor(pointListContainer, changeData, changeMode) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._pointComponent = null;
     this._pointEditComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handlePointClick = this._handlePointClick.bind(this);
@@ -47,13 +54,11 @@ export default class Point {
       return;
     }
 
-    // Проверка на наличие в DOM необходима,
-    // чтобы не пытаться заменить то, что не было отрисовано
-    if (this._pointListContainer.getElement().contains(prevPointComponent.getElement())) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._pointComponent, prevPointComponent);
     }
 
-    if (this._pointListContainer.getElement().contains(prevPointEditComponent.getElement())) {
+    if (this._mode === Mode.EDITING) {
       replace(this._pointEditComponent, prevPointEditComponent);
     }
 
@@ -69,12 +74,21 @@ export default class Point {
   }
 
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToPoint();
+    }
+  }
+
   _replacePointToForm() {
     replace(this._pointEditComponent, this._pointComponent);
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _replaceFormToPoint() {
     replace(this._pointComponent, this._pointEditComponent);
+    this._mode = Mode.DEFAULT;
   }
 
 
@@ -85,6 +99,7 @@ export default class Point {
 
   _escKeyDownHandler(evt) {
     closeElement.isEscapeEvent(evt, this._closeFormEditPoint);
+    this._pointEditComponent.reset(this._point);
   }
 
   _handleEditClick() {

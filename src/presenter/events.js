@@ -25,6 +25,7 @@ export default class Events {
     this._noPointsComponent = new NoPointsView();
 
     this._handlePointChange = this._handlePointChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
   }
 
@@ -34,6 +35,12 @@ export default class Events {
     this._sourcedEventsPoints = eventsPoints.slice(); // копия точек для сортировки
 
     this._renderEvents();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.resetView());
   }
 
   _handlePointChange(updatedPoint) {
@@ -100,7 +107,7 @@ export default class Events {
   }
 
   _renderPoint(pointContainer, point) {
-    const pointPresenter = new PointPresenter(pointContainer, this._handlePointChange);
+    const pointPresenter = new PointPresenter(pointContainer, this._handlePointChange, this._handleModeChange);
     pointPresenter.init(point);
     this._pointPresenter[point.id] = pointPresenter;
   }
