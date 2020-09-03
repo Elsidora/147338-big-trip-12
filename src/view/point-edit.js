@@ -1,5 +1,5 @@
 import SmartView from "./smart";
-import {TRANSFER, ACTIVITY} from "../const";
+import {TRANSFER, ACTIVITY, CITIES} from "../const";
 import {getPointDetailsTemplate} from './point-details';
 
 const types = TRANSFER.concat(ACTIVITY);
@@ -31,6 +31,7 @@ const createPointEditTemplate = (data) => {
   const {
     type,
     cityName,
+    // destination,
     additionalOptions,
     infoDestination,
     price,
@@ -43,6 +44,12 @@ const createPointEditTemplate = (data) => {
   const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
   const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type);
   const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type);
+
+  let cityOptions = ``;
+  for (let city of CITIES) {
+    cityOptions += `<option value="${city}">`;
+  }
+
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
     <header class="event__header">
@@ -70,12 +77,9 @@ const createPointEditTemplate = (data) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${typeTitle} ${toOrIn}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityName}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityName}" placeholder="Minsk" list="destination-list-1">
         <datalist id="destination-list-1">
-          <option value="Amsterdam"></option>
-          <option value="Geneva"></option>
-          <option value="Chamonix"></option>
-          <option value="Saint Petersburg"></option>
+          ${cityOptions}
         </datalist>
       </div>
 
@@ -129,17 +133,19 @@ export default class PointEdit extends SmartView {
     this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._typeClickHandler = this._typeClickHandler.bind(this);
+    this._destinationClickHandler = this._destinationClickHandler.bind(this);
 
     this._setInnerHandlers();
 
   }
 
+  /*
   reset(point) {
     this.updateData(
         PointEdit.parsePointToData(point)
     );
   }
-
+  */
 
   getTemplate() {
     return createPointEditTemplate(this._data);
@@ -160,6 +166,9 @@ export default class PointEdit extends SmartView {
     this.getElement()
       .querySelector(`.event__type-list`)
       .addEventListener(`change`, this._typeClickHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._destinationClickHandler);
   }
 
   _favoriteToggleHandler(evt) {
@@ -213,6 +222,17 @@ export default class PointEdit extends SmartView {
     this.updateData({
       type: this._data.type[0],
       additionalOptions: this._data.additionalOptions
+    });
+  }
+
+  _destinationClickHandler(evt) {
+    evt.preventDefault();
+    this._data.cityName = evt.target.value;
+
+    this._data.infoDestination = this._data.infoDestination;
+    this.updateData({
+      cityName: this._data.cityName,
+      infoDestination: this._data.infoDestination,
     });
   }
 
