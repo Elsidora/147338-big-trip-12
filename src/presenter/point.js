@@ -97,7 +97,7 @@ export default class Point {
   }
 
   _escKeyDownHandler(evt) {
-    this._pointEditComponent.reset(this._point);
+    // this._pointEditComponent.reset(this._point);
     closeElement.isEscapeEvent(evt, this._closeFormEditPoint);
   }
 

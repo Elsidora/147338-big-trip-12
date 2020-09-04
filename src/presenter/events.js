@@ -80,24 +80,23 @@ export default class Events {
     itemDay.textContent = this._currentSortType !== SortType.EVENT ? `` : `DAY`;
   }
 
+  removePresenter(objPresenter) {
+    Object
+      .values(objPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._pointPresenter = {};
+  }
+
   _clearDaysList() {
     if (this._currentSortType !== SortType.EVENT) {
-
-      Object
-        .values(this._pointPresenter)
-        .forEach((presenter) => presenter.destroy());
-      this._pointPresenter = {};
-      remove(this._tripDaysListComponent);
+      this.removePresenter(this._pointPresenter);
     } else {
       this._arrPointPresenter.forEach((item) => {
-        Object
-        .values(item)
-        .forEach((presenter) => presenter.destroy());
-        this._pointPresenter = {};
+        this.removePresenter(item);
       });
       this._arrPointPresenter = [];
-      remove(this._tripDaysListComponent);
     }
+    remove(this._tripDaysListComponent);
   }
 
   _renderSort() {

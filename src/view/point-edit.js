@@ -31,7 +31,6 @@ const createPointEditTemplate = (data) => {
   const {
     type,
     cityName,
-    // destination,
     additionalOptions,
     infoDestination,
     price,
@@ -45,10 +44,7 @@ const createPointEditTemplate = (data) => {
   const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type);
   const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type);
 
-  let cityOptions = ``;
-  for (let city of CITIES) {
-    cityOptions += `<option value="${city}">`;
-  }
+  const cityOptions = CITIES.map((city) => `<option value="${city}">`).join(``);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -138,7 +134,6 @@ export default class PointEdit extends SmartView {
     this._setInnerHandlers();
 
   }
-
   /*
   reset(point) {
     this.updateData(
@@ -146,6 +141,7 @@ export default class PointEdit extends SmartView {
     );
   }
   */
+
 
   getTemplate() {
     return createPointEditTemplate(this._data);
