@@ -36,19 +36,6 @@ const getPointDateTo = () => {
   return tempEndPoint;
 };
 
-const generateDestinations = () => {
-  const destination = [
-    `Amsterdam`,
-    `Geneva`,
-    `Chamonix`,
-    `Saint Petersburg`
-  ];
-
-  const randomIndex = getRandomInteger(0, destination.length - 1);
-
-  return destination[randomIndex];
-};
-
 const generatePointOfRoute = () => {
   const types = TRANSFER.concat(ACTIVITY);
   const type = types[getRandomInteger(0, types.length - 1)];
@@ -71,7 +58,6 @@ const generatePointOfRoute = () => {
     types,
     type,
     typeTitle,
-    destination: generateDestinations(),
     cityName: generateCityName(),
     additionalOptions,
     infoDestination: {

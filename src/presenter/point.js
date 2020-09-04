@@ -65,7 +65,6 @@ export default class Point {
     remove(prevPointComponent);
     remove(prevPointEditComponent);
 
-    renderElement(this._pointListContainer, this._pointComponent, RenderPosition.BEFOREEND);
   }
 
   destroy() {
@@ -98,8 +97,8 @@ export default class Point {
   }
 
   _escKeyDownHandler(evt) {
+    this._pointEditComponent.reset(this._point);
     closeElement.isEscapeEvent(evt, this._closeFormEditPoint);
-    // this._pointEditComponent.reset(this._point);
   }
 
   _handleEditClick() {
