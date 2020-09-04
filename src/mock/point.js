@@ -61,6 +61,7 @@ const generatePointOfRoute = () => {
     cityName: generateCityName(),
     additionalOptions,
     infoDestination: {
+      title: generateCityName(),
       description,
       pictures,
     },

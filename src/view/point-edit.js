@@ -1,5 +1,5 @@
 import SmartView from "./smart";
-import {TRANSFER, ACTIVITY, CITIES} from "../const";
+import {TRANSFER, ACTIVITY, CITIES, OFFERSAVAILABLE} from "../const";
 import {getPointDetailsTemplate} from './point-details';
 
 const types = TRANSFER.concat(ACTIVITY);
@@ -214,10 +214,10 @@ export default class PointEdit extends SmartView {
   _typeClickHandler(evt) {
     evt.preventDefault();
     this._data.type = types.filter((item) => item === evt.target.value);
-    this._data.additionalOptions = this._data.additionalOptions;
+    this._data.additionalOptions = OFFERSAVAILABLE.filter((item) => item.types.includes(evt.target.value));
     this.updateData({
       type: this._data.type[0],
-      additionalOptions: this._data.additionalOptions
+      additionalOptions: this._data.additionalOptions,
     });
   }
 
@@ -225,7 +225,7 @@ export default class PointEdit extends SmartView {
     evt.preventDefault();
     this._data.cityName = evt.target.value;
 
-    this._data.infoDestination = this._data.infoDestination;
+    this._data.infoDestination = .filter((item) => item.title === evt.target.value);
     this.updateData({
       cityName: this._data.cityName,
       infoDestination: this._data.infoDestination,
