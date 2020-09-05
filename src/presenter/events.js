@@ -1,3 +1,5 @@
+import PointPresenter from "./point";
+
 import NoPointsView from "../view/no-points";
 
 import SortingView from "../view/sorting";
@@ -6,22 +8,24 @@ import TripDaysItemView from "../view/trip-days-item";
 import TripDayInfoView from "../view/trip-day-info";
 import TripPointsListView from "../view/trip-points-list";
 
-import PointView from "../view/point";
-import PointEditView from "../view/point-edit";
-
-import {renderElement, RenderPosition, replace, remove} from "../utils/render";
-import {closeElement} from "../utils/helper";
-import {getDateOfForm, getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
+import {renderElement, RenderPosition, remove} from "../utils/render";
+import {getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
+import {updateItem} from "../utils/common";
 import {SortType} from "../const";
 
 export default class Events {
   constructor(eventsContainer) {
     this._eventsContainer = eventsContainer;
     this._currentSortType = SortType.EVENT;
+    this._arrPointPresenter = [];
+    this._pointPresenter = {};
+
     this._sortingComponent = new SortingView();
     this._tripDaysListComponent = new TripDaysListView();
     this._noPointsComponent = new NoPointsView();
 
+    this._handlePointChange = this._handlePointChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
   }
 
@@ -31,6 +35,18 @@ export default class Events {
     this._sourcedEventsPoints = eventsPoints.slice(); // копия точек для сортировки
 
     this._renderEvents();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
+  _handlePointChange(updatedPoint) {
+    this._eventsPoints = updateItem(this._eventsPoints, updatedPoint);
+    this._sourcedEventsPoints = updateItem(this._sourcedEventsPoints, updatedPoint);
+    this._pointPresenter[updatedPoint.id].init(updatedPoint);
   }
 
   _sortPoints(sortType) {
@@ -61,14 +77,25 @@ export default class Events {
     this._renderDaysList();
 
     const itemDay = this._sortingComponent.getElement().querySelector(`.trip-sort__item--day`);
-    if (this._currentSortType !== SortType.EVENT) {
-      itemDay.textContent = ``;
-    } else {
-      itemDay.textContent = `DAY`;
-    }
+    itemDay.textContent = this._currentSortType !== SortType.EVENT ? `` : `DAY`;
+  }
+
+  removePresenter(objPresenter) {
+    Object
+      .values(objPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._pointPresenter = {};
   }
 
   _clearDaysList() {
+    if (this._currentSortType !== SortType.EVENT) {
+      this.removePresenter(this._pointPresenter);
+    } else {
+      this._arrPointPresenter.forEach((item) => {
+        this.removePresenter(item);
+      });
+      this._arrPointPresenter = [];
+    }
     remove(this._tripDaysListComponent);
   }
 
@@ -79,41 +106,9 @@ export default class Events {
   }
 
   _renderPoint(pointContainer, point) {
-    const pointComponent = new PointView(point);
-    const pointEditComponent = new PointEditView(point);
-
-    const replacePointToForm = () => {
-      replace(pointEditComponent, pointComponent);
-    };
-
-    const replaceFormToPoint = () => {
-      replace(pointComponent, pointEditComponent);
-    };
-
-    const closeFormEditPoint = () => {
-      replaceFormToPoint();
-      document.removeEventListener(`keydown`, onEscapePress);
-    };
-
-    const onEscapePress = (evt) => {
-      closeElement.isEscapeEvent(evt, closeFormEditPoint);
-    };
-
-    pointComponent.setEditClickHandler(() => {
-      replacePointToForm();
-      getDateOfForm();
-      document.addEventListener(`keydown`, onEscapePress);
-    });
-
-    pointEditComponent.setPointClickHandler(() => {
-      closeFormEditPoint();
-    });
-
-    pointEditComponent.setFormSubmitHandler(() => {
-      closeFormEditPoint();
-    });
-
-    renderElement(pointContainer, pointComponent, RenderPosition.BEFOREEND);
+    const pointPresenter = new PointPresenter(pointContainer, this._handlePointChange, this._handleModeChange);
+    pointPresenter.init(point);
+    this._pointPresenter[point.id] = pointPresenter;
   }
 
   _renderDays(pointsArr, objectDate, index) {
@@ -129,6 +124,7 @@ export default class Events {
     renderElement(tripDaysItemComponent, tripDayInfoComponent, RenderPosition.BEFOREEND);
     renderElement(tripDaysItemComponent, tripPointsListComponent, RenderPosition.BEFOREEND);
     pointsArr.map((point) => this._renderPoint(tripPointsListComponent, point));
+    this._arrPointPresenter.push(this._pointPresenter);
   }
 
   _renderNoPoints() {
@@ -136,7 +132,7 @@ export default class Events {
   }
 
   _renderDaysList() {
-    const groupedPoints = getPointsByDays(this._eventsPoints);
+
     renderElement(this._eventsContainer, this._tripDaysListComponent, RenderPosition.BEFOREEND);
 
     if (this._currentSortType !== SortType.EVENT) {
@@ -145,6 +141,7 @@ export default class Events {
       this._renderDays(this._eventsPoints, objectDate, index);
 
     } else {
+      const groupedPoints = getPointsByDays(this._eventsPoints);
       Object.keys(groupedPoints).map((day, index) => this._renderDays(groupedPoints[day].points, groupedPoints[day].points[0].dateFrom, index + 1));
     }
   }

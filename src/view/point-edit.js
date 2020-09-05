@@ -1,20 +1,21 @@
-import AbstractView from "./abstract";
-import {TRANSFER, ACTIVITY} from "../const";
-import {getTypeInOrTypeTo} from '../utils/helper';
+import SmartView from "./smart";
+import {TRANSFER, ACTIVITY, CITIES, OFFERSAVAILABLE} from "../const";
 import {getPointDetailsTemplate} from './point-details';
 
-const getItemTypeTemplate = (arr) => {
+const types = TRANSFER.concat(ACTIVITY);
+
+const getItemTypeTemplate = (arr, checkedType) => {
   return arr.map((type) => `<div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checkedType === type ? ` checked` : ``}>
     <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
     </div>`
   ).join(``);
 };
 
 const BLANK_POINT = {
-  type: `bus`,
-  typeTitle: `Bus`,
-  cityName: `Paris`,
+  type: ``,
+  typeTitle: ``,
+  cityName: ``,
   additionalOptions: [],
   price: ``,
   infoDestination: {
@@ -26,20 +27,25 @@ const BLANK_POINT = {
   isFavorite: false,
 };
 
-const createPointEditTemplate = (point = {}) => {
+const createPointEditTemplate = (data) => {
   const {
     type,
-    typeTitle,
     cityName,
     additionalOptions,
     infoDestination,
     price,
-  } = point;
-  const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
+    isFavorite
+  } = data;
 
-  const itemTransferTemplate = getItemTypeTemplate(TRANSFER);
-  const itemActivityTemplate = getItemTypeTemplate(ACTIVITY);
-  const instructionForType = getTypeInOrTypeTo(ACTIVITY, typeTitle);
+  const typeTitle = type[0].toUpperCase() + type.slice(1);
+  const toOrIn = TRANSFER.includes(type) ? `to` : `in`;
+
+  const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
+  const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type);
+  const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type);
+
+  const cityOptions = CITIES.map((city) => `<option value="${city}">`).join(``);
+
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
     <header class="event__header">
@@ -65,14 +71,11 @@ const createPointEditTemplate = (point = {}) => {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${instructionForType}
+          ${typeTitle} ${toOrIn}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityName}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityName}" placeholder="Minsk" list="destination-list-1">
         <datalist id="destination-list-1">
-          <option value="Amsterdam"></option>
-          <option value="Geneva"></option>
-          <option value="Chamonix"></option>
-          <option value="Saint Petersburg"></option>
+          ${cityOptions}
         </datalist>
       </div>
 
@@ -99,7 +102,7 @@ const createPointEditTemplate = (point = {}) => {
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
 
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite">
+      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite === true ? `checked` : ``}>
       <label class="event__favorite-btn" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -116,27 +119,66 @@ const createPointEditTemplate = (point = {}) => {
   );
 };
 
-export default class PointEdit extends AbstractView {
+export default class PointEdit extends SmartView {
   constructor(point = BLANK_POINT) {
     super();
-    this._point = point;
+    this._data = PointEdit.parsePointToData(point);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._pointClickHandler = this._pointClickHandler.bind(this);
+    this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._typeClickHandler = this._typeClickHandler.bind(this);
+    this._destinationClickHandler = this._destinationClickHandler.bind(this);
+
+    this._setInnerHandlers();
+
   }
+  /*
+  reset(point) {
+    this.updateData(
+        PointEdit.parsePointToData(point)
+    );
+  }
+  */
+
 
   getTemplate() {
-    return createPointEditTemplate(this._point);
+    return createPointEditTemplate(this._data);
   }
 
-  _formSubmitHandler(evt) {
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, this._favoriteToggleHandler);
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`input`, this._priceInputHandler);
+    this.getElement()
+      .querySelector(`.event__type-list`)
+      .addEventListener(`change`, this._typeClickHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._destinationClickHandler);
+  }
+
+  _favoriteToggleHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this.updateData({
+      isFavorite: !this._data.isFavorite
+    });
   }
 
-  setFormSubmitHandler(callback) {
-    this._callback.formSubmit = callback;
-    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      price: evt.target.value
+    }, true);
   }
 
   _pointClickHandler(evt) {
@@ -144,8 +186,73 @@ export default class PointEdit extends AbstractView {
     this._callback.pointClick();
   }
 
+
+  /*
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
+  }
+  */
+
+  _favoriteToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      isFavorite: !this._data.isFavorite
+    });
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit(this._data);
+  }
+
+  _typeClickHandler(evt) {
+    evt.preventDefault();
+    this._data.type = types.filter((item) => item === evt.target.value);
+    this._data.additionalOptions = OFFERSAVAILABLE.filter((item) => item.types.includes(evt.target.value));
+    this.updateData({
+      type: this._data.type[0],
+      additionalOptions: this._data.additionalOptions,
+    });
+  }
+
+  _destinationClickHandler(evt) {
+    evt.preventDefault();
+    this._data.cityName = evt.target.value;
+
+    this._data.infoDestination = .filter((item) => item.title === evt.target.value);
+    this.updateData({
+      cityName: this._data.cityName,
+      infoDestination: this._data.infoDestination,
+    });
+  }
+
   setPointClickHandler(callback) {
     this._callback.pointClick = callback;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._pointClickHandler);
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  static parsePointToData(data) {
+    return Object.assign({}, data);
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    if (data.isFavorite) {
+      data.isFavorite = true;
+    }
+
+    return data;
   }
 }

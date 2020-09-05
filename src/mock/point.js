@@ -6,6 +6,7 @@ const Count = {
   MAX: 5,
 };
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 const startDay = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000); // Путешествия началось за три дня до текущей даты. (Date.now() - возвращает кол-во миллисек. текущей даты)
 const startDayTimestamp = startDay.getTime(); // предполагаемое время начала путешествия (getTime() возвращает числовое значение указанной даты в виде количества миллисекунд, прошедших с 00:00:00 1 января 1970 года по UTC)
 const maxDurationDays = 6; // максимальное количество дней продолжительности путешествия
@@ -26,6 +27,7 @@ const getRandomPrice = () => PRICE[getRandomInteger(0, PRICE.length - 1)];
 
 const getRandomOffers = (count) => shuffle(OFFERSAVAILABLE.slice()).slice(0, count);
 
+
 const getPointDateTo = () => {
   const tempEndPoint = getRandomInteger(tempStartPoint, Math.floor(tempStartPoint + (endDayTimestamp - tempStartPoint) / 2));
 
@@ -40,6 +42,7 @@ const generatePointOfRoute = () => {
   const typeTitle = type.charAt(0).toUpperCase() + type.slice(1);
   const offersCount = (TRANSFER.indexOf(type) !== -1) ? getRandomInteger(0, OFFERSAVAILABLE.length - 1) : getRandomInteger(0, Math.floor(OFFERSAVAILABLE.length / 2) - 1);
 
+  const additionalOptions = getRandomOffers(offersCount);
 
   const sentence = shuffle(text.split(`. `).slice());
   const description = sentence.slice(0, getRandomInteger(1, sentence.length)).join(`. `);
@@ -51,11 +54,14 @@ const generatePointOfRoute = () => {
 
 
   return {
+    id: generateId(),
+    types,
     type,
     typeTitle,
     cityName: generateCityName(),
-    additionalOptions: getRandomOffers(offersCount),
+    additionalOptions,
     infoDestination: {
+      title: generateCityName(),
       description,
       pictures,
     },
