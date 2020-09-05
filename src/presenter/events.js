@@ -30,15 +30,18 @@ export default class Events {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
   }
 
-  init(eventsPoints) {
-    this._eventsPoints = eventsPoints.slice();
-
-    this._sourcedEventsPoints = eventsPoints.slice(); // копия точек для сортировки
+  init() {
 
     this._renderEvents();
   }
 
   _getPoints() {
+    switch (this._currentSortType) {
+      case SortType.TIME:
+        return this._pointsModel.getPoints().slice().sort(sortTimeDown);
+      case SortType.PRICE:
+        return this._pointsModel.getPoints().slice().sort(sortPriceDown);
+    }
     return this._pointsModel.getPoints();
   }
 
@@ -49,26 +52,8 @@ export default class Events {
   }
 
   _handlePointChange(updatedPoint) {
-    this._eventsPoints = updateItem(this._eventsPoints, updatedPoint);
-    this._sourcedEventsPoints = updateItem(this._sourcedEventsPoints, updatedPoint);
+
     this._pointPresenter[updatedPoint.id].init(updatedPoint);
-  }
-
-  _sortPoints(sortType) {
-
-    switch (sortType) {
-      case SortType.TIME:
-        this._eventsPoints.sort(sortTimeDown);
-        break;
-      case SortType.PRICE:
-        this._eventsPoints.sort(sortPriceDown);
-        break;
-      default:
-        this._eventsPoints = this._sourcedEventsPoints.slice();
-    }
-
-    this._currentSortType = sortType;
-
   }
 
   _handleSortTypeChange(sortType) {
@@ -77,7 +62,7 @@ export default class Events {
       return;
     }
 
-    this._sortPoints(sortType);
+    this._currentSortType = sortType;
     this._clearDaysList();
     this._renderDaysList();
 
@@ -143,10 +128,10 @@ export default class Events {
     if (this._currentSortType !== SortType.EVENT) {
       const objectDate = ``;
       const index = ``;
-      this._renderDays(this._eventsPoints, objectDate, index);
+      this._renderDays(this._getPoints(), objectDate, index);
 
     } else {
-      const groupedPoints = getPointsByDays(this._eventsPoints);
+      const groupedPoints = getPointsByDays(this._getPoints());
       Object.keys(groupedPoints).map((day, index) => this._renderDays(groupedPoints[day].points, groupedPoints[day].points[0].dateFrom, index + 1));
     }
   }
@@ -154,7 +139,7 @@ export default class Events {
 
   _renderEvents() {
 
-    if (!this._eventsPoints.length) {
+    if (!this._getPoints().length) {
       this._renderNoPoints();
       return;
     }

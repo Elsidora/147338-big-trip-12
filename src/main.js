@@ -61,4 +61,4 @@ const renderControls = (renderControlsContainer) => {
 
 renderInfo(tripMainElement);
 renderControls(tripControlsElement);
-eventsPresenter.init(points);
+eventsPresenter.init();
