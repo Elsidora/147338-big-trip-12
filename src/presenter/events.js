@@ -14,7 +14,8 @@ import {updateItem} from "../utils/common";
 import {SortType} from "../const";
 
 export default class Events {
-  constructor(eventsContainer) {
+  constructor(eventsContainer, pointsModel) {
+    this._pointsModel = pointsModel;
     this._eventsContainer = eventsContainer;
     this._currentSortType = SortType.EVENT;
     this._arrPointPresenter = [];
@@ -35,6 +36,10 @@ export default class Events {
     this._sourcedEventsPoints = eventsPoints.slice(); // копия точек для сортировки
 
     this._renderEvents();
+  }
+
+  _getPoints() {
+    return this._pointsModel.getPoints();
   }
 
   _handleModeChange() {

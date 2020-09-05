@@ -225,7 +225,7 @@ export default class PointEdit extends SmartView {
     evt.preventDefault();
     this._data.cityName = evt.target.value;
 
-    this._data.infoDestination = .filter((item) => item.title === evt.target.value);
+    this._data.infoDestination = this._data.infoDestination;
     this.updateData({
       cityName: this._data.cityName,
       infoDestination: this._data.infoDestination,
