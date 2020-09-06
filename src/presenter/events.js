@@ -10,7 +10,7 @@ import TripPointsListView from "../view/trip-points-list";
 
 import {renderElement, RenderPosition, remove} from "../utils/render";
 import {getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
-import {SortType} from "../const";
+import {SortType, UpdateType, UserAction} from "../const";
 
 export default class Events {
   constructor(eventsContainer, pointsModel) {
@@ -54,19 +54,38 @@ export default class Events {
   }
 
   _handleViewAction(actionType, updateType, update) {
-    console.log(actionType, updateType, update);
+    // console.log(actionType, updateType, update);
     // Здесь будем вызывать обновление модели.
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
     // update - обновленные данные
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this._pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this._pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this._pointsModel.deletePoint(updateType, update);
+        break;
+    }
   }
 
   _handleModelEvent(updateType, data) {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда точка добавилась в избранное)
-    // - обновить весь список дней (например, при переключении фильтра)
+
+    switch (updateType) {
+      case UpdateType.PATCH:
+        // - обновить часть списка (например, когда поменялось описание)
+        this._taskPresenter[data.id].init(data);
+        break;
+      case UpdateType.MINOR:
+        // - обновить список (например, когда точка добавилась в избранное)
+        break;
+      case UpdateType.MAJOR:
+        // - обновить весь список дней (например, при переключении фильтра)
+        break;
+    }
   }
 
   _handleSortTypeChange(sortType) {
