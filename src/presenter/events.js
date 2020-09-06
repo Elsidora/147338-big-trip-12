@@ -10,7 +10,6 @@ import TripPointsListView from "../view/trip-points-list";
 
 import {renderElement, RenderPosition, remove} from "../utils/render";
 import {getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
-import {updateItem} from "../utils/common";
 import {SortType} from "../const";
 
 export default class Events {
@@ -25,9 +24,12 @@ export default class Events {
     this._tripDaysListComponent = new TripDaysListView();
     this._noPointsComponent = new NoPointsView();
 
-    this._handlePointChange = this._handlePointChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
+
+    this._tasksModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -51,9 +53,20 @@ export default class Events {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _handlePointChange(updatedPoint) {
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
 
-    this._pointPresenter[updatedPoint.id].init(updatedPoint);
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда точка добавилась в избранное)
+    // - обновить весь список дней (например, при переключении фильтра)
   }
 
   _handleSortTypeChange(sortType) {
@@ -96,7 +109,7 @@ export default class Events {
   }
 
   _renderPoint(pointContainer, point) {
-    const pointPresenter = new PointPresenter(pointContainer, this._handlePointChange, this._handleModeChange);
+    const pointPresenter = new PointPresenter(pointContainer, this._handleViewAction, this._handleModeChange);
     pointPresenter.init(point);
     this._pointPresenter[point.id] = pointPresenter;
   }
