@@ -20,7 +20,8 @@ export default class Events {
     this._arrPointPresenter = [];
     this._pointPresenter = {};
 
-    this._sortingComponent = new SortingView();
+    this._sortComponent = null;
+
     this._tripDaysListComponent = new TripDaysListView();
     this._noPointsComponent = new NoPointsView();
 
@@ -29,7 +30,7 @@ export default class Events {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
 
-    this._tasksModel.addObserver(this._handleModelEvent);
+    this._pointsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -81,9 +82,13 @@ export default class Events {
         break;
       case UpdateType.MINOR:
         // - обновить список (например, когда точка добавилась в избранное)
+        this._clearEvents();
+        this._renderEvents();
         break;
       case UpdateType.MAJOR:
         // - обновить весь список дней (например, при переключении фильтра)
+        this._clearEvents({resetSortType: true});
+        this._renderEvents();
         break;
     }
   }
@@ -95,10 +100,10 @@ export default class Events {
     }
 
     this._currentSortType = sortType;
-    this._clearDaysList();
-    this._renderDaysList();
+    this._clearEvents();
+    this._renderEvents();
 
-    const itemDay = this._sortingComponent.getElement().querySelector(`.trip-sort__item--day`);
+    const itemDay = this._sortComponent.getElement().querySelector(`.trip-sort__item--day`);
     itemDay.textContent = this._currentSortType !== SortType.EVENT ? `` : `DAY`;
   }
 
@@ -109,7 +114,7 @@ export default class Events {
     this._pointPresenter = {};
   }
 
-  _clearDaysList() {
+  _clearEvents({resetSortType = false} = {}) {
     if (this._currentSortType !== SortType.EVENT) {
       this.removePresenter(this._pointPresenter);
     } else {
@@ -119,12 +124,24 @@ export default class Events {
       this._arrPointPresenter = [];
     }
     remove(this._tripDaysListComponent);
+    remove(this._sortComponent);
+    remove(this._noPointsComponent);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.EVENT;
+    }
   }
 
   _renderSort() {
-    renderElement(this._eventsContainer, this._sortingComponent, RenderPosition.BEFOREEND);
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
 
-    this._sortingComponent.setSortTypeChangeHandler(this._handleSortTypeChange); // добавляем прослушивание обработчика события
+    this._sortComponent = new SortingView(this._currentSortType);
+
+
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange); // добавляем прослушивание обработчика события
+    renderElement(this._eventsContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
   _renderPoint(pointContainer, point) {
@@ -153,6 +170,7 @@ export default class Events {
     renderElement(this._eventsContainer, this._noPointsComponent, RenderPosition.BEFOREEND);
   }
 
+  /*
   _renderDaysList() {
 
     renderElement(this._eventsContainer, this._tripDaysListComponent, RenderPosition.BEFOREEND);
@@ -167,6 +185,7 @@ export default class Events {
       Object.keys(groupedPoints).map((day, index) => this._renderDays(groupedPoints[day].points, groupedPoints[day].points[0].dateFrom, index + 1));
     }
   }
+  */
 
 
   _renderEvents() {
@@ -177,6 +196,17 @@ export default class Events {
     }
 
     this._renderSort();
-    this._renderDaysList();
+
+    renderElement(this._eventsContainer, this._tripDaysListComponent, RenderPosition.BEFOREEND);
+
+    if (this._currentSortType !== SortType.EVENT) {
+      const objectDate = ``;
+      const index = ``;
+      this._renderDays(this._getPoints(), objectDate, index);
+
+    } else {
+      const groupedPoints = getPointsByDays(this._getPoints());
+      Object.keys(groupedPoints).map((day, index) => this._renderDays(groupedPoints[day].points, groupedPoints[day].points[0].dateFrom, index + 1));
+    }
   }
 }
