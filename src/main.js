@@ -12,6 +12,7 @@ import {generateFilter} from "./mock/filter";
 
 import EventsPresenter from "./presenter/events";
 import PointsModel from "./model/points";
+import FilterModel from "./model/filter.js";
 
 const POINT_COUNT = 20;
 
@@ -20,6 +21,8 @@ const filters = generateFilter(points);
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
+
+const filterModel = new FilterModel();
 
 const pageBodyElement = document.querySelector(`.page-body`);
 const headerElement = pageBodyElement.querySelector(`.page-header`);
