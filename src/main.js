@@ -8,7 +8,6 @@ import FilterView from "./view/filter";
 import {renderElement, RenderPosition} from "./utils/render";
 
 import {generatePointsArray} from "./mock/point";
-import {generateFilter} from "./mock/filter";
 
 import EventsPresenter from "./presenter/events";
 import PointsModel from "./model/points";
@@ -17,7 +16,13 @@ import FilterModel from "./model/filter.js";
 const POINT_COUNT = 20;
 
 const points = generatePointsArray(POINT_COUNT);
-const filters = generateFilter(points);
+const filters = [
+  {
+    type: `everything`,
+    name: `EVERYTHING`,
+    count: 0
+  }
+];
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
@@ -55,7 +60,7 @@ const renderInfo = (renderInfoContainer) => {
 
 const renderControls = (renderControlsContainer) => {
   const siteMenuComponent = new SiteMenuView();
-  const filterComponent = new FilterView(filters);
+  const filterComponent = new FilterView(filters, `everything`);
 
   renderElement(renderControlsContainer, siteMenuComponent.getElement(), RenderPosition.BEFOREEND);
   renderElement(renderControlsContainer, filterComponent.getTitleFilterElement(), RenderPosition.BEFOREEND);
