@@ -1,6 +1,10 @@
 import SmartView from "./smart";
 import {TRANSFER, ACTIVITY, CITIES, OFFERSAVAILABLE} from "../const";
 import {getPointDetailsTemplate} from './point-details';
+import {helpersDate} from '../utils/point';
+import flatpickr from "flatpickr";
+
+// import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const types = TRANSFER.concat(ACTIVITY);
 
@@ -33,6 +37,8 @@ const createPointEditTemplate = (data) => {
     cityName,
     additionalOptions,
     infoDestination,
+    dateFrom,
+    dateTo,
     price,
     isFavorite
   } = data;
@@ -83,12 +89,12 @@ const createPointEditTemplate = (data) => {
         <label class="visually-hidden" for="event-start-time-1">
           From
         </label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" placeholder="${helpersDate.humanizeEventTimeFormat(dateFrom)}">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">
           To
         </label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" placeholder="${helpersDate.humanizeEventTimeFormat(dateTo)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -123,17 +129,36 @@ export default class PointEdit extends SmartView {
   constructor(point = BLANK_POINT) {
     super();
     this._data = PointEdit.parsePointToData(point);
+    this._datepickerStart = null;
+    this._datepickerEnd = null;
+
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._pointClickHandler = this._pointClickHandler.bind(this);
     this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
+
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
+
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._typeClickHandler = this._typeClickHandler.bind(this);
     this._destinationClickHandler = this._destinationClickHandler.bind(this);
 
-    this._setInnerHandlers();
 
+    this._setInnerHandlers();
+    this._setDatepicker();
   }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+  }
+
   /*
   reset(point) {
     this.updateData(
@@ -149,7 +174,71 @@ export default class PointEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  _setDatepicker() {
+    if (this._datepickerStart || this._datepickerEnd) {
+      this._datepickerStart.destroy();
+      this._datepickerEnd.destroy();
+      this._datepickerStart = null;
+      this._datepickerEnd = null;
+    }
+
+    if (this._data) {
+      this._datepickerStart = flatpickr(
+          this.getElement().querySelector(`#event-start-time-1`),
+          {
+            enableTime: true,
+            /* eslint-disable-next-line */
+            time_24hr: true,
+            altInput: true,
+            altFormat: `d/m/y H:i`,
+            dateFormat: `d/m/y H:i`,
+            minDate: `today`,
+            defaultDate: this._data.dateFrom,
+            onChange: this._startDateChangeHandler
+          }
+      );
+      this._datepickerEnd = flatpickr(
+          this.getElement().querySelector(`#event-end-time-1`),
+          {
+            enableTime: true,
+            /* eslint-disable-next-line */
+            time_24hr: true,
+            altInput: true,
+            altFormat: `d/m/y H:i`,
+            dateFormat: `d/m/y H:i`,
+            minDate: `today`,
+            defaultDate: this._data.dateTo,
+            onChange: this._endDateChangeHandler
+          }
+      );
+    }
+  }
+
+  _startDateChangeHandler([userDate]) {
+    if (userDate !== this._data.dateFrom) {
+      this.updateData({
+
+        dateFrom: userDate,
+        dateTo: this._data.dateTo,
+
+      }, true);
+    }
+  }
+
+  _endDateChangeHandler([userDate]) {
+    if (userDate !== this._data.dateTo) {
+      this.updateData({
+
+        dateFrom: this._data.dateFrom,
+        dateTo: userDate,
+
+      }, true);
+    }
   }
 
   _setInnerHandlers() {
@@ -240,6 +329,16 @@ export default class PointEdit extends SmartView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(PointEdit.parseDataToPoint(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }
 
   static parsePointToData(data) {

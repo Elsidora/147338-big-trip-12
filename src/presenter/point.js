@@ -2,7 +2,7 @@ import PointView from "../view/point";
 import PointEditView from "../view/point-edit";
 
 import {renderElement, RenderPosition, replace, remove} from "../utils/render";
-import {getDateOfForm} from "../utils/point";
+// import {getDateOfForm} from "../utils/point";
 import {closeElement} from "../utils/helper";
 import {UserAction, UpdateType} from "../const";
 
@@ -26,6 +26,7 @@ export default class Point {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._closeFormEditPoint = this._closeFormEditPoint.bind(this);
 
@@ -45,7 +46,7 @@ export default class Point {
     this._pointEditComponent.setPointClickHandler(this._handlePointClick);
     // this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
-
+    this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
     // Добавим возможность повторно инициализировать презентер точки путешествия.
     // Для этого в методе init будем запоминать предыдущие компоненты.
     // Если они null, то есть не создавались, рендерим как раньше.
@@ -104,7 +105,7 @@ export default class Point {
 
   _handleEditClick() {
     this._replacePointToForm();
-    getDateOfForm();
+    // getDateOfForm();
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
@@ -133,6 +134,14 @@ export default class Point {
         point
     );
     this._closeFormEditPoint();
+  }
+
+  _handleDeleteClick(point) {
+    this._changeData(
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        point
+    );
   }
 
 }

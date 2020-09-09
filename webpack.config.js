@@ -16,7 +16,17 @@ module.exports = {
     contentBase: path.join(__dirname, 'public'),
     port: 3000,
     hot: isDev,
+
   },
+  module: {
+    rules: [
+        {
+            test: /\.css$/i,
+            use: ['style-loader', 'css-loader']
+        }
+    ]
+  },
+
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
