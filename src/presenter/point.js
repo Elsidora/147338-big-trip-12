@@ -2,7 +2,7 @@ import PointView from "../view/point";
 import PointEditView from "../view/point-edit";
 
 import {renderElement, RenderPosition, replace, remove} from "../utils/render";
-// import {getDateOfForm} from "../utils/point";
+import {isDatesEqual} from "../utils/point";
 import {closeElement} from "../utils/helper";
 import {UserAction, UpdateType} from "../const";
 
@@ -127,14 +127,20 @@ export default class Point {
     );
   }
 
-  _handleFormSubmit(point) {
+  _handleFormSubmit(update) {
+    const isMinorUpdate =
+      !isDatesEqual(this._point.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this._point.dateTo, update.dateTo);
+
     this._changeData(
         UserAction.UPDATE_POINT,
-        UpdateType.MINOR,
-        point
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        update
     );
-    this._closeFormEditPoint();
+
+    this._replaceFormToPoint();
   }
+
 
   _handleDeleteClick(point) {
     this._changeData(
