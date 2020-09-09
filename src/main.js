@@ -10,19 +10,13 @@ import {renderElement, RenderPosition} from "./utils/render";
 import {generatePointsArray} from "./mock/point";
 
 import EventsPresenter from "./presenter/events";
+import FilterPresenter from "./presenter/filter";
 import PointsModel from "./model/points";
 import FilterModel from "./model/filter.js";
 
 const POINT_COUNT = 20;
 
 const points = generatePointsArray(POINT_COUNT);
-const filters = [
-  {
-    type: `everything`,
-    name: `EVERYTHING`,
-    count: 0
-  }
-];
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
@@ -37,6 +31,7 @@ const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = mainElement.querySelector(`.trip-events`);
 
 const eventsPresenter = new EventsPresenter(tripEventsElement, pointsModel);
+const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, pointsModel);
 
 const renderInfo = (renderInfoContainer) => {
 
@@ -69,4 +64,5 @@ const renderControls = (renderControlsContainer) => {
 
 renderInfo(tripMainElement);
 renderControls(tripControlsElement);
+filterPresenter.init();
 eventsPresenter.init();
