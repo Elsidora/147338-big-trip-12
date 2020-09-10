@@ -12,7 +12,7 @@ import TripPointsListView from "../view/trip-points-list";
 import {renderElement, RenderPosition, remove} from "../utils/render";
 import {getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
 import {pointToFilterMap} from "../utils/filter";
-import {SortType, UpdateType, UserAction, FilterType} from "../const";
+import {SortType, UpdateType, UserAction} from "../const";
 
 export default class Events {
   constructor(eventsContainer, pointsModel, filterModel) {
@@ -33,20 +33,27 @@ export default class Events {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._pointNewPresenter = new PointNewPresenter(this._tripDaysListComponent, this._handleViewAction);
   }
 
   init() {
 
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderEvents();
   }
 
+  destroy() {
+    this._clearEvents({resetSortType: true});
+    // remove(this._sortComponent);
+    remove(this._tripDaysListComponent);
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
   createPoint(callback) {
-    this._currentSortType = SortType.EVENT;
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._pointNewPresenter.init(callback);
   }
 

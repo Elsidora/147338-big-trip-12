@@ -12,8 +12,8 @@ import {generatePointsArray} from "./mock/point";
 import EventsPresenter from "./presenter/events";
 import FilterPresenter from "./presenter/filter";
 import PointsModel from "./model/points";
-import FilterModel from "./model/filter.js";
-import {MenuItem} from "./const";
+import FilterModel from "./model/filter";
+import {MenuItem, UpdateType, FilterType} from "./const";
 
 const POINT_COUNT = 20;
 
@@ -71,18 +71,23 @@ const renderControls = (renderControlsContainer) => {
       case MenuItem.ADD_NEW_EVENT:
         // Скрыть статистику
         // Показать доску
-        // Показать форму добавления новой задачи
-        // Убрать выделение с ADD NEW TASK после сохранения
+        // Показать форму добавления новой точки
+        // Убрать выделение с ADD NEW POINT после сохранения
+        eventsPresenter.destroy();
+        filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+        eventsPresenter.init();
         eventsPresenter.createPoint(handlePointNewFormClose);
         siteMenuComponent.getElement().querySelector(`[data-menu-item="${MenuItem.TABLE}"]`).disabled = true;
         break;
       case MenuItem.TABLE:
         // Показать доску
         // Скрыть статистику
+        eventsPresenter.init();
         break;
       case MenuItem.STATS:
         // Скрыть доску
         // Показать статистику
+        eventsPresenter.destroy();
         break;
     }
   };
