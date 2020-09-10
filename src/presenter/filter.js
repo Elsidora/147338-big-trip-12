@@ -1,6 +1,6 @@
 import FilterView from "../view/filter.js";
-import {render, RenderPosition, replace, remove} from "../utils/render.js";
-import {filter} from "../utils/filter.js";
+import {renderElement, RenderPosition, replace, remove} from "../utils/render.js";
+import {pointToFilterMap} from "../utils/filter.js";
 import {FilterType, UpdateType} from "../const.js";
 
 export default class Filter {
@@ -20,7 +20,7 @@ export default class Filter {
   }
 
   init() {
-    // this._currentFilter = this._filterModel.getFilter();
+    this._currentFilter = this._filterModel.getFilter();
 
     const filters = this._getFilters();
     const prevFilterComponent = this._filterComponent;
@@ -29,7 +29,7 @@ export default class Filter {
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
-      render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
+      renderElement(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
       return;
     }
 
@@ -46,27 +46,27 @@ export default class Filter {
       return;
     }
 
-    this._filterModel.setFilter(UpdateType.MINOR, filterType);
+    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
 
   _getFilters() {
-    const points = this._pointsModel.getTasks();
+    const points = this._pointsModel.getPoints();
 
     return [
       {
         type: FilterType.EVERYTHING,
         name: `everything`,
-        count: filter[FilterType.EVERYTHING](points).length
+        count: pointToFilterMap[FilterType.EVERYTHING](points).length
       },
       {
         type: FilterType.PAST,
         name: `past`,
-        count: filter[FilterType.PAST](points).length
+        count: pointToFilterMap[FilterType.PAST](points).length
       },
       {
         type: FilterType.FUTURE,
         name: `future`,
-        count: filter[FilterType.FUTURE](points).length
+        count: pointToFilterMap[FilterType.FUTURE](points).length
       },
     ];
   }

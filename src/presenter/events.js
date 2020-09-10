@@ -1,4 +1,5 @@
 import PointPresenter from "./point";
+import PointNewPresenter from "./point-new";
 
 import NoPointsView from "../view/no-points";
 
@@ -10,11 +11,13 @@ import TripPointsListView from "../view/trip-points-list";
 
 import {renderElement, RenderPosition, remove} from "../utils/render";
 import {getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
-import {SortType, UpdateType, UserAction} from "../const";
+import {pointToFilterMap} from "../utils/filter";
+import {SortType, UpdateType, UserAction, FilterType} from "../const";
 
 export default class Events {
-  constructor(eventsContainer, pointsModel) {
+  constructor(eventsContainer, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
     this._eventsContainer = eventsContainer;
     this._currentSortType = SortType.EVENT;
     this._arrPointPresenter = [];
@@ -31,6 +34,9 @@ export default class Events {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // привязываем к контексту
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
+    this._pointNewPresenter = new PointNewPresenter(this._tripDaysListComponent, this._handleViewAction);
   }
 
   init() {
@@ -38,17 +44,29 @@ export default class Events {
     this._renderEvents();
   }
 
+  createPoint() {
+    this._currentSortType = SortType.EVENT;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._pointNewPresenter.init();
+  }
+
+
   _getPoints() {
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filtredPoints = pointToFilterMap[filterType](points);
+
     switch (this._currentSortType) {
       case SortType.TIME:
-        return this._pointsModel.getPoints().slice().sort(sortTimeDown);
+        return filtredPoints.sort(sortTimeDown);
       case SortType.PRICE:
-        return this._pointsModel.getPoints().slice().sort(sortPriceDown);
+        return filtredPoints.sort(sortPriceDown);
     }
-    return this._pointsModel.getPoints();
+    return filtredPoints;
   }
 
   _handleModeChange() {
+    this._pointNewPresenter.destroy();
     Object
       .values(this._pointPresenter)
       .forEach((presenter) => presenter.resetView());
@@ -115,6 +133,7 @@ export default class Events {
   }
 
   _clearEvents({resetSortType = false} = {}) {
+    this._pointNewPresenter.destroy();
     if (this._currentSortType !== SortType.EVENT) {
       this.removePresenter(this._pointPresenter);
     } else {

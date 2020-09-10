@@ -13,6 +13,7 @@ import EventsPresenter from "./presenter/events";
 import FilterPresenter from "./presenter/filter";
 import PointsModel from "./model/points";
 import FilterModel from "./model/filter.js";
+import {MenuItem} from "./const";
 
 const POINT_COUNT = 20;
 
@@ -30,7 +31,7 @@ const tripMainElement = headerElement.querySelector(`.trip-main`);
 const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = mainElement.querySelector(`.trip-events`);
 
-const eventsPresenter = new EventsPresenter(tripEventsElement, pointsModel);
+const eventsPresenter = new EventsPresenter(tripEventsElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, pointsModel);
 
 const renderInfo = (renderInfoContainer) => {
@@ -55,14 +56,38 @@ const renderInfo = (renderInfoContainer) => {
 
 const renderControls = (renderControlsContainer) => {
   const siteMenuComponent = new SiteMenuView();
-  const filterComponent = new FilterView(filters, `everything`);
+  const filterComponent = new FilterView();
 
   renderElement(renderControlsContainer, siteMenuComponent.getElement(), RenderPosition.BEFOREEND);
   renderElement(renderControlsContainer, filterComponent.getTitleFilterElement(), RenderPosition.BEFOREEND);
-  renderElement(renderControlsContainer, filterComponent.getElement(), RenderPosition.BEFOREEND);
+
+  const handleSiteMenuClick = (menuItem) => {
+    switch (menuItem) {
+      case MenuItem.ADD_NEW_EVENT:
+        // Скрыть статистику
+        // Показать доску
+        // Показать форму добавления новой задачи
+        // Убрать выделение с ADD NEW TASK после сохранения
+        break;
+      case MenuItem.TABLE:
+        // Показать доску
+        // Скрыть статистику
+        break;
+      case MenuItem.STATS:
+        // Скрыть доску
+        // Показать статистику
+        break;
+    }
+  };
+
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 };
 
 renderInfo(tripMainElement);
 renderControls(tripControlsElement);
 filterPresenter.init();
 eventsPresenter.init();
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  eventsPresenter.createPoint();
+});

@@ -1,3 +1,4 @@
+import he from "he";
 import SmartView from "./smart";
 import {TRANSFER, ACTIVITY, CITIES, OFFERSAVAILABLE} from "../const";
 import {getPointDetailsTemplate} from './point-details';
@@ -44,6 +45,7 @@ const createPointEditTemplate = (data) => {
   } = data;
 
   const typeTitle = type[0].toUpperCase() + type.slice(1);
+  console.log(type[0]);
   const toOrIn = TRANSFER.includes(type) ? `to` : `in`;
 
   const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
@@ -79,9 +81,9 @@ const createPointEditTemplate = (data) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${typeTitle} ${toOrIn}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityName}" placeholder="Minsk" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(cityName)}" placeholder="Minsk" list="destination-list-1">
         <datalist id="destination-list-1">
-          ${cityOptions}
+          ${he.encode(cityOptions)}
         </datalist>
       </div>
 
