@@ -10,6 +10,7 @@ export default class PointNew {
     this._changeData = changeData;
 
     this._pointEditComponent = null;
+    this._destroyCallback = null;
     this._pointsListComponent = new TripPointsList();
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -17,7 +18,8 @@ export default class PointNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(callback) {
+    this._destroyCallback = callback;
     if (this._pointEditComponent !== null) {
       return;
     }
@@ -28,12 +30,16 @@ export default class PointNew {
 
     renderElement(this._pointsListComponent, this._pointEditComponent, RenderPosition.AFTERBEGIN);
 
-    // document.addEventListener(`keydown`, this._escKeyDownHandler);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   destroy() {
     if (this._pointEditComponent === null) {
       return;
+    }
+
+    if (this._destroyCallback !== null) {
+      this._destroyCallback();
     }
 
     remove(this._pointEditComponent);

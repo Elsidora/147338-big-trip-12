@@ -61,6 +61,11 @@ const renderControls = (renderControlsContainer) => {
   renderElement(renderControlsContainer, siteMenuComponent.getElement(), RenderPosition.BEFOREEND);
   renderElement(renderControlsContainer, filterComponent.getTitleFilterElement(), RenderPosition.BEFOREEND);
 
+  const handlePointNewFormClose = () => {
+    siteMenuComponent.getElement().querySelector(`[data-menu-item="${MenuItem.TABLE}"]`).disabled = false;
+    siteMenuComponent.setMenuItem(MenuItem.TABLE);
+  };
+
   const handleSiteMenuClick = (menuItem) => {
     switch (menuItem) {
       case MenuItem.ADD_NEW_EVENT:
@@ -68,6 +73,8 @@ const renderControls = (renderControlsContainer) => {
         // Показать доску
         // Показать форму добавления новой задачи
         // Убрать выделение с ADD NEW TASK после сохранения
+        eventsPresenter.createPoint(handlePointNewFormClose);
+        siteMenuComponent.getElement().querySelector(`[data-menu-item="${MenuItem.TABLE}"]`).disabled = true;
         break;
       case MenuItem.TABLE:
         // Показать доску
@@ -87,7 +94,3 @@ renderInfo(tripMainElement);
 renderControls(tripControlsElement);
 filterPresenter.init();
 eventsPresenter.init();
-document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
-  evt.preventDefault();
-  eventsPresenter.createPoint();
-});

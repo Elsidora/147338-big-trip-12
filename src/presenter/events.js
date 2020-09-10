@@ -44,12 +44,11 @@ export default class Events {
     this._renderEvents();
   }
 
-  createPoint() {
+  createPoint(callback) {
     this._currentSortType = SortType.EVENT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._pointNewPresenter.init();
+    this._pointNewPresenter.init(callback);
   }
-
 
   _getPoints() {
     const filterType = this._filterModel.getFilter();
