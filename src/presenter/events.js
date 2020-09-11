@@ -54,7 +54,9 @@ export default class Events {
   }
 
   createPoint(callback) {
+    console.log("VENI")
     this._pointNewPresenter.init(callback);
+    console.log("VIDI");
   }
 
   _getPoints() {

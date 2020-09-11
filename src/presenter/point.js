@@ -105,7 +105,6 @@ export default class Point {
 
   _handleEditClick() {
     this._replacePointToForm();
-    // getDateOfForm();
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 

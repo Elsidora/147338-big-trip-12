@@ -54,28 +54,6 @@ export const isPointPastExpiringToday = (dateTo) => {
   return currentDate.getTime() > dateTo.getTime();
 };
 
-/*
-const flatpickrOptions = {
-  enableTime: true,
-  // eslint-disable-next-line camelcase
-  time_24hr: true,
-  altInput: true,
-  altFormat: `d/m/y H:i`,
-  dateFormat: `d/m/y H:i`,
-  minDate: `today`,
-  onReady(selectedDates, dateStr, instance) {
-    instance._input.placeholder = instance.formatDate(new Date(), `d/m/y H:i`);
-  },
-};
-
-
-export const getDateOfForm = () => {
-  const startDateEventField = flatpickr(`#event-start-time-1`, flatpickrOptions);
-  const endDateEventField = flatpickr(`#event-end-time-1`, flatpickrOptions);
-  return (startDateEventField, endDateEventField);
-};
-*/
-
 const getWeightForNullItem = (a, b) => {
   if (a === null && b === null) {
     return 0;

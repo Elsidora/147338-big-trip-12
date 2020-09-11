@@ -25,6 +25,7 @@ export default class PointNew {
     }
 
     this._pointEditComponent = new PointEditView();
+    console.log("FOREVER");
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
