@@ -3,20 +3,27 @@ import TripRouteView from "./view/trip-route";
 import TripCostView from "./view/trip-cost";
 
 import SiteMenuView from "./view/site-menu";
+import StatisticsView from "./view/statistics";
 import FilterView from "./view/filter";
 
-import {renderElement, RenderPosition} from "./utils/render";
+import {renderElement, remove, RenderPosition} from "./utils/render";
 
 import {generatePointsArray} from "./mock/point";
-import {generateFilter} from "./mock/filter";
 
 import EventsPresenter from "./presenter/events";
+import FilterPresenter from "./presenter/filter";
+import PointsModel from "./model/points";
+import FilterModel from "./model/filter";
+import {MenuItem, UpdateType, FilterType} from "./const";
 
-const POINT_COUNT = 20;
+const POINT_COUNT = 15;
 
 const points = generatePointsArray(POINT_COUNT);
-const filters = generateFilter(points);
 
+const pointsModel = new PointsModel();
+pointsModel.setPoints(points);
+
+const filterModel = new FilterModel();
 
 const pageBodyElement = document.querySelector(`.page-body`);
 const headerElement = pageBodyElement.querySelector(`.page-header`);
@@ -25,7 +32,11 @@ const tripMainElement = headerElement.querySelector(`.trip-main`);
 const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = mainElement.querySelector(`.trip-events`);
 
-const eventsPresenter = new EventsPresenter(tripEventsElement);
+const eventsPresenter = new EventsPresenter(tripEventsElement, pointsModel, filterModel);
+const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, pointsModel);
+const statsContainer = mainElement.querySelector(`.page-body__container`);
+
+let statsComponent = null;
 
 const renderInfo = (renderInfoContainer) => {
 
@@ -49,13 +60,45 @@ const renderInfo = (renderInfoContainer) => {
 
 const renderControls = (renderControlsContainer) => {
   const siteMenuComponent = new SiteMenuView();
-  const filterComponent = new FilterView(filters);
+  const filterComponent = new FilterView();
 
   renderElement(renderControlsContainer, siteMenuComponent.getElement(), RenderPosition.BEFOREEND);
   renderElement(renderControlsContainer, filterComponent.getTitleFilterElement(), RenderPosition.BEFOREEND);
-  renderElement(renderControlsContainer, filterComponent.getElement(), RenderPosition.BEFOREEND);
+
+  const handleSiteMenuClick = (menuItem) => {
+    switch (menuItem) {
+      case MenuItem.TABLE:
+        eventsPresenter.init();
+        remove(statsComponent);
+        break;
+      case MenuItem.STATS:
+        eventsPresenter.destroy();
+        statsComponent = new StatisticsView(pointsModel.getPoints());
+        renderElement(statsContainer, statsComponent, RenderPosition.BEFOREEND);
+        break;
+    }
+  };
+
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 };
 
 renderInfo(tripMainElement);
 renderControls(tripControlsElement);
-eventsPresenter.init(points);
+filterPresenter.init();
+eventsPresenter.init();
+
+const handlePointNewFormClose = () => {
+  document.querySelector(`.trip-main__event-add-btn`).disabled = false;
+};
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+
+  eventsPresenter.destroy();
+  remove(statsComponent);
+  filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+
+  eventsPresenter.init();
+  eventsPresenter.createPoint(handlePointNewFormClose);
+  document.querySelector(`.trip-main__event-add-btn`).disabled = true;
+});

@@ -1,5 +1,5 @@
 import moment from "moment";
-import flatpickr from "flatpickr";
+// import flatpickr from "flatpickr";
 
 export const getPointsByDays = (points) => {
   const groupedPoints = {};
@@ -25,7 +25,13 @@ export const helpersDate = {
   humanizeEventTime: (dateObject) => dateObject.toLocaleTimeString(`en-US`, {hour12: false, hour: `2-digit`, minute: `2-digit`}),
   humanizeEventDateTime: (dateObject) => moment(dateObject).format(`YYYY-MM-DD[T]HH:mm`),
   humanizeEventDateWithoutTime: (dateObject) => moment(dateObject).format(`YYYY-MM-DD`),
+  humanizeEventTimeFormat: (dateObject) => moment(dateObject).format(`DD/MM/YY HH:mm`),
 };
+/*
+export const getTimeFormat = (date) => {
+  return `${moment(date).format(`DD/MM/YY HH:mm`)}`;
+};
+*/
 
 const getCurrentDate = () => {
   const currentDate = new Date();
@@ -46,26 +52,6 @@ export const isPointPastExpiringToday = (dateTo) => {
   const currentDate = getCurrentDate();
 
   return currentDate.getTime() > dateTo.getTime();
-};
-
-const flatpickrOptions = {
-  enableTime: true,
-  // eslint-disable-next-line camelcase
-  time_24hr: true,
-  altInput: true,
-  altFormat: `d/m/y H:i`,
-  dateFormat: `d/m/y H:i`,
-  minDate: `today`,
-  onReady(selectedDates, dateStr, instance) {
-    instance._input.placeholder = instance.formatDate(new Date(), `d/m/y H:i`);
-  },
-};
-
-
-export const getDateOfForm = () => {
-  const startDateEventField = flatpickr(`#event-start-time-1`, flatpickrOptions);
-  const endDateEventField = flatpickr(`#event-end-time-1`, flatpickrOptions);
-  return (startDateEventField, endDateEventField);
 };
 
 const getWeightForNullItem = (a, b) => {
@@ -106,3 +92,15 @@ export const sortTimeDown = (pointA, pointB) => {
   return durationB - durationA;
 };
 
+export const sortStartDown = (pointA, pointB) => {
+  return pointA.dateTo.getTime() - pointB.dateFrom.getTime();
+};
+
+
+export const isDatesEqual = (dateA, dateB) => {
+  if (dateA === null && dateB === null) {
+    return true;
+  }
+
+  return moment(dateA).isSame(dateB, `day`);
+};
