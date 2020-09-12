@@ -10,7 +10,7 @@ import TripDayInfoView from "../view/trip-day-info";
 import TripPointsListView from "../view/trip-points-list";
 
 import {renderElement, RenderPosition, remove} from "../utils/render";
-import {getPointsByDays, sortPriceDown, sortTimeDown} from "../utils/point";
+import {getPointsByDays, sortPriceDown, sortTimeDown, sortStartDown} from "../utils/point";
 import {pointToFilterMap} from "../utils/filter";
 import {SortType, UpdateType, UserAction} from "../const";
 
@@ -54,23 +54,24 @@ export default class Events {
   }
 
   createPoint(callback) {
-    console.log("VENI")
     this._pointNewPresenter.init(callback);
-    console.log("VIDI");
   }
 
   _getPoints() {
     const filterType = this._filterModel.getFilter();
     const points = this._pointsModel.getPoints();
-    const filtredPoints = pointToFilterMap[filterType](points);
+    const filteredPoints = pointToFilterMap[filterType](points);
 
     switch (this._currentSortType) {
       case SortType.TIME:
-        return filtredPoints.sort(sortTimeDown);
+        return filteredPoints.sort(sortTimeDown);
       case SortType.PRICE:
-        return filtredPoints.sort(sortPriceDown);
+        return filteredPoints.sort(sortPriceDown);
+
+      default:
+        return filteredPoints.sort(sortStartDown);
     }
-    return filtredPoints;
+
   }
 
   _handleModeChange() {
@@ -196,24 +197,6 @@ export default class Events {
   _renderNoPoints() {
     renderElement(this._eventsContainer, this._noPointsComponent, RenderPosition.BEFOREEND);
   }
-
-  /*
-  _renderDaysList() {
-
-    renderElement(this._eventsContainer, this._tripDaysListComponent, RenderPosition.BEFOREEND);
-
-    if (this._currentSortType !== SortType.EVENT) {
-      const objectDate = ``;
-      const index = ``;
-      this._renderDays(this._getPoints(), objectDate, index);
-
-    } else {
-      const groupedPoints = getPointsByDays(this._getPoints());
-      Object.keys(groupedPoints).map((day, index) => this._renderDays(groupedPoints[day].points, groupedPoints[day].points[0].dateFrom, index + 1));
-    }
-  }
-  */
-
 
   _renderEvents() {
 

@@ -3,6 +3,7 @@ import SmartView from "./smart";
 import {TRANSFER, ACTIVITY, CITIES, OFFERSAVAILABLE} from "../const";
 import {getPointDetailsTemplate} from './point-details';
 import {helpersDate} from '../utils/point';
+import {getTypeInOrTypeTo} from "../utils/helper";
 import flatpickr from "flatpickr";
 
 // import "../../node_modules/flatpickr/dist/flatpickr.min.css";
@@ -17,21 +18,6 @@ const getItemTypeTemplate = (arr, checkedType) => {
   ).join(``);
 };
 
-const BLANK_POINT = {
-  type: ``,
-  typeTitle: ``,
-  cityName: ``,
-  additionalOptions: [],
-  price: ``,
-  infoDestination: {
-    description: ``,
-    pictures: [],
-  },
-  dateFrom: new Date(),
-  dateTo: new Date(),
-  isFavorite: false,
-};
-
 const createPointEditTemplate = (data) => {
   const {
     type,
@@ -44,9 +30,7 @@ const createPointEditTemplate = (data) => {
     isFavorite
   } = data;
 
-  const typeTitle = type[0].toUpperCase() + type.slice(1);
-  // console.log(type[0]);
-  const toOrIn = TRANSFER.includes(type) ? `to` : `in`;
+  const typeTitle = getTypeInOrTypeTo(type);
 
   const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
   const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type);
@@ -79,11 +63,11 @@ const createPointEditTemplate = (data) => {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${typeTitle} ${toOrIn}
+          ${typeTitle}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(cityName)}" placeholder="Minsk" list="destination-list-1">
         <datalist id="destination-list-1">
-          ${he.encode(cityOptions)}
+          ${cityOptions}
         </datalist>
       </div>
 
@@ -128,7 +112,7 @@ const createPointEditTemplate = (data) => {
 };
 
 export default class PointEdit extends SmartView {
-  constructor(point = BLANK_POINT) {
+  constructor(point) {
     super();
     this._data = PointEdit.parsePointToData(point);
     this._datepickerStart = null;

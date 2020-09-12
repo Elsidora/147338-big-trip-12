@@ -99,8 +99,6 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (e
   filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
 
   eventsPresenter.init();
-  console.log("GOODBYE");
   eventsPresenter.createPoint(handlePointNewFormClose);
-  console.log("HELLO");
   document.querySelector(`.trip-main__event-add-btn`).disabled = true;
 });

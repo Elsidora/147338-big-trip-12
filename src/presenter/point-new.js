@@ -1,17 +1,33 @@
 import PointEditView from "../view/point-edit";
-import TripPointsList from "../view/trip-points-list";
+import TripPointsListView from "../view/trip-days-list";
 import {generateId} from "../mock/point";
 import {remove, renderElement, RenderPosition} from "../utils/render";
-import {UserAction, UpdateType} from "../const";
+import {getRandomInteger} from "../utils/common";
+import {UserAction, UpdateType, TRANSFER} from "../const";
+
+const BLANK_POINT = {
+  type: TRANSFER[getRandomInteger(0, TRANSFER.length - 1)],
+  cityName: ``,
+  additionalOptions: [],
+  price: ``,
+  infoDestination: {
+    description: ``,
+    pictures: [],
+  },
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  isFavorite: false,
+};
 
 export default class PointNew {
   constructor(pointListContainer, changeData) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
-
+    this._pointsListComponent = null;
     this._pointEditComponent = null;
     this._destroyCallback = null;
-    this._pointsListComponent = new TripPointsList();
+
+    this._pointsListComponent = new TripPointsListView();
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -24,12 +40,12 @@ export default class PointNew {
       return;
     }
 
-    this._pointEditComponent = new PointEditView();
-    console.log("FOREVER");
+    this._pointEditComponent = new PointEditView(BLANK_POINT);
+
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    renderElement(this._pointsListComponent, this._pointEditComponent, RenderPosition.AFTERBEGIN);
+    renderElement(this._pointListContainer, this._pointEditComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }

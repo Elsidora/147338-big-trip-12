@@ -92,6 +92,11 @@ export const sortTimeDown = (pointA, pointB) => {
   return durationB - durationA;
 };
 
+export const sortStartDown = (pointA, pointB) => {
+  return pointA.dateTo.getTime() - pointB.dateFrom.getTime();
+};
+
+
 export const isDatesEqual = (dateA, dateB) => {
   if (dateA === null && dateB === null) {
     return true;

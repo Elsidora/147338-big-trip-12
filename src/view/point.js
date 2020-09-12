@@ -1,5 +1,4 @@
 import AbstractView from "./abstract";
-import {ACTIVITY} from '../const';
 import {shuffle} from '../utils/common';
 import {helpersDate} from '../utils/point';
 import {getTypeInOrTypeTo} from '../utils/helper';
@@ -63,7 +62,7 @@ export const createPointTemplate = (point) => {
   const {type, cityName, additionalOptions, dateFrom, dateTo, price} = point;
 
   const itemOffersTemplate = createItemOffersTemplate(additionalOptions);
-  const instructionForType = getTypeInOrTypeTo(ACTIVITY, type);
+  const instructionForType = getTypeInOrTypeTo(type);
   const beginDatePoint = helpersDate.humanizeEventDateTime(dateFrom);
   const endDatePoint = helpersDate.humanizeEventDateTime(dateTo);
   const startTime = helpersDate.humanizeEventTime(dateFrom);
