@@ -15,10 +15,23 @@ import FilterPresenter from "./presenter/filter";
 import PointsModel from "./model/points";
 import FilterModel from "./model/filter";
 import {MenuItem, UpdateType, FilterType} from "./const";
+import Api from "./api";
 
 const POINT_COUNT = 15;
+const AUTHORIZATION = `Basic hS2sd3dfSwcl1sa2j`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const points = generatePointsArray(POINT_COUNT);
+
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getPoints().then((points) => {
+  console.log(points);
+  // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
+  // а ещё на сервере используется snake_case, а у нас camelCase.
+  // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
+  // Есть вариант получше - паттерн "Адаптер"
+});
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
