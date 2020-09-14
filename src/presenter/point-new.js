@@ -1,6 +1,6 @@
 import PointEditView from "../view/point-edit";
 import TripPointsListView from "../view/trip-days-list";
-import {generateId} from "../mock/point";
+import {generateId} from "../utils/point";
 import {remove, renderElement, RenderPosition} from "../utils/render";
 import {getRandomInteger} from "../utils/common";
 import {UserAction, UpdateType, TRANSFER} from "../const";

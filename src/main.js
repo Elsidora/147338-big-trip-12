@@ -8,7 +8,7 @@ import FilterView from "./view/filter";
 
 import {renderElement, remove, RenderPosition} from "./utils/render";
 
-import {generatePointsArray} from "./mock/point";
+// import {generatePointsArray} from "./mock/point";
 
 import EventsPresenter from "./presenter/events";
 import FilterPresenter from "./presenter/filter";
@@ -17,14 +17,15 @@ import FilterModel from "./model/filter";
 import {MenuItem, UpdateType, FilterType} from "./const";
 import Api from "./api";
 
-const POINT_COUNT = 15;
+// const POINT_COUNT = 15;
 const AUTHORIZATION = `Basic hS2sd3dfSwcl1sa2j`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
-const points = generatePointsArray(POINT_COUNT);
+// const points = generatePointsArray(POINT_COUNT);
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
+/*
 api.getPoints().then((points) => {
   console.log(points);
   // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
@@ -32,9 +33,10 @@ api.getPoints().then((points) => {
   // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
   // Есть вариант получше - паттерн "Адаптер"
 });
+*/
 
 const pointsModel = new PointsModel();
-pointsModel.setPoints(points);
+// pointsModel.setPoints(points);
 
 const filterModel = new FilterModel();
 
@@ -54,16 +56,16 @@ let statsComponent = null;
 const renderInfo = (renderInfoContainer) => {
 
   const tripInfoComponent = new TripInfoView();
-  const tripCostComponent = new TripCostView(points);
+  const tripCostComponent = new TripCostView(api.getPoints());
 
-  if (!points.length) {
+  if (!api.getPoints().length) {
     renderElement(renderInfoContainer, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
     renderElement(tripInfoComponent.getElement(), tripCostComponent.getElement(), RenderPosition.BEFOREEND);
     return;
   }
 
-  const tripStartDate = points[0].dateFrom;
-  const tripEndDate = points[points.length - 1].dateTo;
+  const tripStartDate = api.getPoints()[0].dateFrom;
+  const tripEndDate = api.getPoints()[api.getPoints().length - 1].dateTo;
   const tripRouteComponent = new TripRouteView(tripStartDate, tripEndDate);
 
   renderElement(renderInfoContainer, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
@@ -99,6 +101,15 @@ renderInfo(tripMainElement);
 renderControls(tripControlsElement);
 filterPresenter.init();
 eventsPresenter.init();
+api.getPoints()
+  .then((points) => {
+    console.log(points);
+    pointsModel.setPoints(UpdateType.INIT, points);
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+  });
+
 
 const handlePointNewFormClose = () => {
   document.querySelector(`.trip-main__event-add-btn`).disabled = false;
@@ -115,3 +126,5 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (e
   eventsPresenter.createPoint(handlePointNewFormClose);
   document.querySelector(`.trip-main__event-add-btn`).disabled = true;
 });
+
+

@@ -6,8 +6,9 @@ export default class Points extends Observer {
     this._points = [];
   }
 
-  setPoints(points) {
+  setPoints(updateType, points) {
     this._points = points.slice();
+    this._notify(updateType);
   }
 
   getPoints() {
@@ -61,7 +62,9 @@ export default class Points extends Observer {
           price: point.base_price,
           dateFrom: point.date_from !== null ? new Date(point.date_from) : point.date_from, // На клиенте дата хранится как экземпляр Date
           dateTo: point.date_to !== null ? new Date(point.date_to) : point.date_to,
+          infoDestination: point.destination,
           isFavorite: point.is_favorite,
+          additionalOptions: point.offers,
           // type: point.type,
         }
     );
@@ -70,7 +73,9 @@ export default class Points extends Observer {
     delete adaptedPoint.base_price;
     delete adaptedPoint.date_from;
     delete adaptedPoint.date_to;
+    delete adaptedPoint.destination;
     delete adaptedPoint.is_favorite;
+    delete adaptedPoint.offers;
     // delete adaptedPoint.type;
 
     return adaptedPoint;
@@ -84,7 +89,9 @@ export default class Points extends Observer {
           "base_price": point.price,
           "date_from": point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null, // На сервере дата хранится в ISO формате
           "date_to": point.dateTo instanceof Date ? point.dateTo.toISOString() : null,
+          "destination": point.infoDestination,
           "is_favorite": point.isFavorite,
+          "offers": point.additionalOptions,
         }
     );
 
@@ -92,7 +99,9 @@ export default class Points extends Observer {
     delete adaptedPoint.price;
     delete adaptedPoint.dateFrom;
     delete adaptedPoint.dateTo;
+    delete adaptedPoint.infoDestination;
     delete adaptedPoint.isFavorite;
+    delete adaptedPoint.additionalOptions;
 
     return adaptedPoint;
   }

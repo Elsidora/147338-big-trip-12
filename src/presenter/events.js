@@ -1,6 +1,6 @@
 import PointPresenter from "./point";
 import PointNewPresenter from "./point-new";
-
+import LoadingView from "../view/list-loading";
 import NoPointsView from "../view/no-points";
 
 import SortingView from "../view/sorting";
@@ -22,11 +22,13 @@ export default class Events {
     this._currentSortType = SortType.EVENT;
     this._arrPointPresenter = [];
     this._pointPresenter = {};
+    this._isLoading = true;
 
     this._sortComponent = null;
 
     this._tripDaysListComponent = new TripDaysListView();
     this._noPointsComponent = new NoPointsView();
+    this._loadingComponent = new LoadingView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -117,6 +119,11 @@ export default class Events {
         this._clearEvents({resetSortType: true});
         this._renderEvents();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderEvents();
+        break;
     }
   }
 
@@ -154,6 +161,7 @@ export default class Events {
     remove(this._tripDaysListComponent);
     remove(this._sortComponent);
     remove(this._noPointsComponent);
+    remove(this._loadingComponent);
 
     if (resetSortType) {
       this._currentSortType = SortType.EVENT;
@@ -194,11 +202,19 @@ export default class Events {
     this._arrPointPresenter.push(this._pointPresenter);
   }
 
+  _renderLoading() {
+    renderElement(this._eventsContainer, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _renderNoPoints() {
     renderElement(this._eventsContainer, this._noPointsComponent, RenderPosition.BEFOREEND);
   }
 
   _renderEvents() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
 
     if (!this._getPoints().length) {
       this._renderNoPoints();

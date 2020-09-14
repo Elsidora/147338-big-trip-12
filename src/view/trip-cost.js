@@ -1,5 +1,5 @@
 import AbstractView from "./abstract";
-
+/*
 const getFullCost = (points) => {
   let fullSum = 0;
   let sum = 0;
@@ -16,12 +16,13 @@ const getFullCost = (points) => {
   fullSum += sum;
   return fullSum;
 };
+*/
 
 const createTripCostTemplate = (points) => {
-  const fullCost = getFullCost(points);
+  // const fullCost = getFullCost(points);
   return (
     `<p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">${fullCost}</span>
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">0</span>
     </p>`
   );
 };
