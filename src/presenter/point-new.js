@@ -1,6 +1,5 @@
 import PointEditView from "../view/point-edit";
 import TripPointsListView from "../view/trip-days-list";
-import {generateId} from "../utils/point";
 import {remove, renderElement, RenderPosition} from "../utils/render";
 import {getRandomInteger} from "../utils/common";
 import {UserAction, UpdateType, TRANSFER} from "../const";
@@ -12,6 +11,7 @@ const BLANK_POINT = {
   price: ``,
   infoDestination: {
     description: ``,
+    name: ``,
     pictures: [],
   },
   dateFrom: new Date(),
@@ -69,9 +69,7 @@ export default class PointNew {
     this._changeData(
         UserAction.ADD_POINT,
         UpdateType.MINOR,
-        // Пока у нас нет сервера, который бы после сохранения
-        // выдывал честный id задачи, нам нужно позаботиться об этом самим
-        Object.assign({id: generateId()}, point)
+        point
     );
     this.destroy();
   }
