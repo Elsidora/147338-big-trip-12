@@ -14,6 +14,8 @@ import EventsPresenter from "./presenter/events";
 import FilterPresenter from "./presenter/filter";
 import PointsModel from "./model/points";
 import FilterModel from "./model/filter";
+import OffersModel from "./model/offers";
+import DestinationModel from "./model/destination";
 import {MenuItem, UpdateType, FilterType} from "./const";
 import Api from "./api";
 
@@ -40,6 +42,9 @@ const pointsModel = new PointsModel();
 
 const filterModel = new FilterModel();
 
+const offersModel = new OffersModel();
+const destinationModel = new DestinationModel();
+
 const pageBodyElement = document.querySelector(`.page-body`);
 const headerElement = pageBodyElement.querySelector(`.page-header`);
 const mainElement = pageBodyElement.querySelector(`.page-main`);
@@ -47,7 +52,7 @@ const tripMainElement = headerElement.querySelector(`.trip-main`);
 const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = mainElement.querySelector(`.trip-events`);
 
-const eventsPresenter = new EventsPresenter(tripEventsElement, pointsModel, filterModel);
+const eventsPresenter = new EventsPresenter(tripEventsElement, pointsModel, filterModel, offersModel, destinationModel, api);
 const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, pointsModel);
 const statsContainer = mainElement.querySelector(`.page-body__container`);
 
@@ -101,6 +106,7 @@ renderInfo(tripMainElement);
 renderControls(tripControlsElement);
 filterPresenter.init();
 eventsPresenter.init();
+/*
 api.getPoints()
   .then((points) => {
     console.log(points);
@@ -109,7 +115,23 @@ api.getPoints()
   .catch(() => {
     pointsModel.setPoints(UpdateType.INIT, []);
   });
+*/
 
+api.getOffers()
+  .then((offers) => {
+    offersModel.setOffers(offers);
+
+    api.getPoints()
+      .then((points) => {
+        pointsModel.setPoints(UpdateType.INIT, points);
+      });
+
+  });
+
+api.getDestination()
+  .then((destination) => {
+    destinationModel.setDestination(destination);
+  });
 
 const handlePointNewFormClose = () => {
   document.querySelector(`.trip-main__event-add-btn`).disabled = false;

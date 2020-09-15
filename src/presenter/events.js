@@ -15,7 +15,7 @@ import {pointToFilterMap} from "../utils/filter";
 import {SortType, UpdateType, UserAction} from "../const";
 
 export default class Events {
-  constructor(eventsContainer, pointsModel, filterModel) {
+  constructor(eventsContainer, pointsModel, filterModel, api) {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._eventsContainer = eventsContainer;
@@ -23,6 +23,7 @@ export default class Events {
     this._arrPointPresenter = [];
     this._pointPresenter = {};
     this._isLoading = true;
+    this._api = api;
 
     this._sortComponent = null;
 
@@ -91,7 +92,9 @@ export default class Events {
     // update - обновленные данные
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updateType, update);
+        this._api.updatePoint(update).then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updateType, update);
