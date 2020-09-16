@@ -2,6 +2,7 @@ import AbstractView from "./abstract";
 import {shuffle} from '../utils/common';
 import {helpersDate} from '../utils/point';
 import {getTypeInOrTypeTo} from '../utils/helper';
+import flatpickr from "flatpickr";
 
 const createItemOffersTemplate = (additionalOptions) => {
   const additionalOptionsShallow = shuffle(additionalOptions.slice());
@@ -115,23 +116,90 @@ export default class Point extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
-
+    this._data = Point.parsePointToData(point);
+    this._datepickerStart = null;
+    this._datepickerEnd = null;
     this._editClickHandler = this._editClickHandler.bind(this);
-
   }
 
   getTemplate() {
     return createPointTemplate(this._point);
   }
 
+  _setDatepicker() {
+    if (this._datepickerStart || this._datepickerEnd) {
+      this._datepickerStart.destroy();
+      this._datepickerEnd.destroy();
+      this._datepickerStart = null;
+      this._datepickerEnd = null;
+    }
+    if (this._data) {
+      this._datepickerStart = flatpickr(
+          document.querySelector(`input[name=event-start-time]`),
+          {
+            enableTime: true,
+            /* eslint-disable-next-line */
+            time_24hr: true,
+            altInput: true,
+            altFormat: `d/m/y H:i`,
+            dateFormat: `d/m/y H:i`,
+            minDate: `today`,
+            defaultDate: this._data.dateFrom,
+            onChange: this._startDateChangeHandler
+          }
+      );
+      this._datepickerEnd = flatpickr(
+          document.querySelector(`input[name=event-end-time]`),
+          {
+            enableTime: true,
+            /* eslint-disable-next-line */
+            time_24hr: true,
+            altInput: true,
+            altFormat: `d/m/y H:i`,
+            dateFormat: `d/m/y H:i`,
+            minDate: `today`,
+            defaultDate: this._data.dateTo,
+            onChange: this._endDateChangeHandler
+          }
+      );
+    }
+  }
+
   _editClickHandler(evt) {
     evt.preventDefault();
     this._callback.editClick();
+    this._setDatepicker();
   }
 
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
+  }
+
+  static parsePointToData(data) {
+    return Object.assign(
+        {},
+        data,
+        {
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        }
+    );
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    if (data.isFavorite) {
+      data.isFavorite = true;
+    }
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
+    return data;
   }
 }
 

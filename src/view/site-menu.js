@@ -1,16 +1,16 @@
 import AbstractView from "./abstract";
 import {MenuItem} from "../const";
 
-export const createSiteMenuTemplate = (currentMenuType) => {
+export const createSiteMenuTemplate = () => {
   return `<nav class="trip-controls__trip-tabs  trip-tabs">
       <a
-          class="trip-tabs__btn ${currentMenuType === MenuItem.TABLE ? `trip-tabs__btn--active` : ``}"
+          class="trip-tabs__btn trip-tabs__btn--active"
           data-menu-item="${MenuItem.TABLE}"
           href="#">
           Table
       </a>
       <a
-          class="trip-tabs__btn ${currentMenuType === MenuItem.STATS ? `trip-tabs__btn--active` : ``}"
+          class="trip-tabs__btn"
           data-menu-item="${MenuItem.STATS}"
           href="#">
           Stats
@@ -20,10 +20,9 @@ export const createSiteMenuTemplate = (currentMenuType) => {
 
 
 export default class SiteMenu extends AbstractView {
-  constructor(currentMenuType) {
+  constructor() {
     super();
 
-    this._currentMenuType = currentMenuType;
     this._menuClickHandler = this._menuClickHandler.bind(this);
   }
 

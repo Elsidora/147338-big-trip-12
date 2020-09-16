@@ -4,7 +4,7 @@ import {TRANSFER, ACTIVITY, CITIES, OFFERSAVAILABLE} from "../const";
 import {getPointDetailsTemplate} from './point-details';
 import {helpersDate} from '../utils/point';
 import {getTypeInOrTypeTo} from "../utils/helper";
-import flatpickr from "flatpickr";
+// import flatpickr from "flatpickr";
 
 // import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -190,7 +190,7 @@ export default class PointEdit extends SmartView {
 
 
     this._setInnerHandlers();
-    this._setDatepicker();
+    // this._setDatepicker();
   }
 
   removeElement() {
@@ -217,50 +217,50 @@ export default class PointEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this._setDatepicker();
+    // this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
-  _setDatepicker() {
-    if (this._datepickerStart || this._datepickerEnd) {
-      this._datepickerStart.destroy();
-      this._datepickerEnd.destroy();
-      this._datepickerStart = null;
-      this._datepickerEnd = null;
-    }
-
-    if (this._data) {
-      this._datepickerStart = flatpickr(
-          this.getElement().querySelector(`#event-start-time-1`),
-          {
-            enableTime: true,
-            /* eslint-disable-next-line */
-            time_24hr: true,
-            altInput: true,
-            altFormat: `d/m/y H:i`,
-            dateFormat: `d/m/y H:i`,
-            minDate: `today`,
-            defaultDate: this._data.dateFrom,
-            onChange: this._startDateChangeHandler
-          }
-      );
-      this._datepickerEnd = flatpickr(
-          this.getElement().querySelector(`#event-end-time-1`),
-          {
-            enableTime: true,
-            /* eslint-disable-next-line */
-            time_24hr: true,
-            altInput: true,
-            altFormat: `d/m/y H:i`,
-            dateFormat: `d/m/y H:i`,
-            minDate: `today`,
-            defaultDate: this._data.dateTo,
-            onChange: this._endDateChangeHandler
-          }
-      );
-    }
-  }
+//   _setDatepicker() {
+//     if (this._datepickerStart || this._datepickerEnd) {
+//       this._datepickerStart.destroy();
+//       this._datepickerEnd.destroy();
+//       this._datepickerStart = null;
+//       this._datepickerEnd = null;
+//     }
+// // debugger;
+//     if (this._data) {
+//       this._datepickerStart = flatpickr(
+//           this.getElement().querySelector(`#event-start-time-1`),
+//           {
+//             enableTime: true,
+//             /* eslint-disable-next-line */
+//             time_24hr: true,
+//             altInput: true,
+//             altFormat: `d/m/y H:i`,
+//             dateFormat: `d/m/y H:i`,
+//             minDate: `today`,
+//             defaultDate: this._data.dateFrom,
+//             onChange: this._startDateChangeHandler
+//           }
+//       );
+//       this._datepickerEnd = flatpickr(
+//           this.getElement().querySelector(`#event-end-time-1`),
+//           {
+//             enableTime: true,
+//             /* eslint-disable-next-line */
+//             time_24hr: true,
+//             altInput: true,
+//             altFormat: `d/m/y H:i`,
+//             dateFormat: `d/m/y H:i`,
+//             minDate: `today`,
+//             defaultDate: this._data.dateTo,
+//             onChange: this._endDateChangeHandler
+//           }
+//       );
+//     }
+//   }
 
   _startDateChangeHandler([userDate]) {
     if (userDate !== this._data.dateFrom) {

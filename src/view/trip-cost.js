@@ -1,28 +1,14 @@
 import AbstractView from "./abstract";
-/*
-const getFullCost = (points) => {
-  let fullSum = 0;
-  let sum = 0;
 
-  points.map((point) => {
-    sum += point.price;
-    if (point.additionalOptions.length) {
-      for (let i = 0; i < point.additionalOptions.length; i += 1) {
-        sum += point.additionalOptions[i].price;
-      }
-    }
-  });
+const createTripCostTemplate = (points) => {
 
-  fullSum += sum;
-  return fullSum;
-};
-*/
+  const fullCost = points.reduce((acc, point) => {
+    return acc + point.price;
+  }, 0);
 
-const createTripCostTemplate = () => {
-  // const fullCost = getFullCost(points);
   return (
     `<p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">0</span>
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${fullCost}</span>
     </p>`
   );
 };
