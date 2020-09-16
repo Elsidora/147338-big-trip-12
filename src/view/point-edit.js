@@ -18,25 +18,30 @@ const getItemTypeTemplate = (arr, checkedType) => {
   ).join(``);
 };
 
-const createPointEditTemplate = (data) => {
+const createPointEditTemplate = (dataPoints, dataOffers, destination) => {
   const {
+    id,
     type,
-    cityName,
     additionalOptions,
     infoDestination,
     dateFrom,
     dateTo,
     price,
-    isFavorite
-  } = data;
+    isFavorite,
+    isDisabled,
+    isSaving,
+    isDeleting
+  } = dataPoints;
 
   const typeTitle = getTypeInOrTypeTo(type);
 
   const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
-  const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type);
-  const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type);
+  const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type, isDisabled);
+  const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type, isDisabled);
 
   const cityOptions = CITIES.map((city) => `<option value="${city}">`).join(``);
+
+  const isSubmitDisabled = (name === ``);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -46,7 +51,12 @@ const createPointEditTemplate = (data) => {
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+        <input
+          class="event__type-toggle  visually-hidden"
+          id="event-type-toggle-${id}"
+          type="checkbox"
+          ${isDisabled ? `disabled` : ``}
+          >
 
         <div class="event__type-list">
           <fieldset class="event__type-group">
@@ -62,40 +72,87 @@ const createPointEditTemplate = (data) => {
       </div>
 
       <div class="event__field-group  event__field-group--destination">
-        <label class="event__label  event__type-output" for="event-destination-1">
+        <label class="event__label  event__type-output" for="event-destination-${id}">
           ${typeTitle}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${infoDestination.name}" placeholder="Minsk" list="destination-list-1">
-        <datalist id="destination-list-1">
+        <input
+          class="event__input  event__input--destination"
+          id="event-destination-${id}"
+          type="text"
+          name="event-destination"
+          value="${infoDestination.name}"
+          placeholder="Minsk"
+          list="destination-list-${id}"
+          ${isDisabled ? `disabled` : ``}
+          >
+        <datalist id="destination-list-${id}">
           ${cityOptions}
         </datalist>
       </div>
 
       <div class="event__field-group  event__field-group--time">
-        <label class="visually-hidden" for="event-start-time-1">
+        <label class="visually-hidden" for="event-start-time-${id}">
           From
         </label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" placeholder="${helpersDate.humanizeEventTimeFormat(dateFrom)}">
+        <input
+          class="event__input  event__input--time"
+          id="event-start-time-${id}"
+          type="text"
+          name="event-start-time"
+          placeholder="${helpersDate.humanizeEventTimeFormat(dateFrom)}"
+          ${isDisabled ? `disabled` : ``}>
         &mdash;
-        <label class="visually-hidden" for="event-end-time-1">
+        <label class="visually-hidden" for="event-end-time-${id}">
           To
         </label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" placeholder="${helpersDate.humanizeEventTimeFormat(dateTo)}">
+        <input
+          class="event__input  event__input--time"
+          id="event-end-time-${id}"
+          type="text"
+          name="event-end-time"
+          placeholder="${helpersDate.humanizeEventTimeFormat(dateTo)}"
+          ${isDisabled ? `disabled` : ``}>
       </div>
 
       <div class="event__field-group  event__field-group--price">
-        <label class="event__label" for="event-price-1">
+        <label class="event__label" for="event-price-${id}">
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
+        <input
+          class="event__input  event__input--price"
+          id="event-price-${id}"
+          type="number"
+          name="event-price"
+          value="${price}"
+          ${isDisabled ? `disabled` : ``}
+          required>
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
+      <button
+        class="event__save-btn  btn  btn--blue"
+        type="submit"
+        ${isSubmitDisabled || isDisabled ? `disabled` : ``}
+        >${isSaving ? `Saving...` : `Save`}
+      </button>
+      <button
+        class="event__reset-btn"
+        type="reset"
+        ${isDisabled ? `disabled` : ``}
+        >
+        ${isDeleting ? `Deleting...` : `Delete`}
 
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite === true ? `checked` : ``}>
-      <label class="event__favorite-btn" for="event-favorite-1">
+      </button>
+
+      <input
+        id="event-favorite-1"
+        class="event__favorite-checkbox  visually-hidden"
+        type="checkbox"
+        name="event-favorite"
+        ${isFavorite === true ? `checked` : ``}
+        ${isDisabled ? `disabled` : ``}
+        >
+      <label class="event__favorite-btn" for="event-favorite-${id}">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
           <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -328,7 +385,15 @@ export default class PointEdit extends SmartView {
   }
 
   static parsePointToData(data) {
-    return Object.assign({}, data);
+    return Object.assign(
+      {},
+      data
+      {
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      }
+    );
   }
 
   static parseDataToPoint(data) {
@@ -337,6 +402,10 @@ export default class PointEdit extends SmartView {
     if (data.isFavorite) {
       data.isFavorite = true;
     }
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
 
     return data;
   }
