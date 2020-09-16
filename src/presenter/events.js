@@ -1,7 +1,8 @@
-import PointPresenter from "./point";
+import PointPresenter, {State as TaskPresenterViewState} from "./point";
 import PointNewPresenter from "./point-new";
 import LoadingView from "../view/list-loading";
 import NoPointsView from "../view/no-points";
+
 
 import SortingView from "../view/sorting";
 import TripDaysListView from "../view/trip-days-list";
@@ -92,23 +93,38 @@ export default class Events {
     // update - обновленные данные
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._api.updatePoint(update).then((response) => {
-          this._pointsModel.updatePoint(updateType, response);
-        });
+        this._pointPresenter[update.id].setViewState(PointPresenterViewState.SAVING);
+        this._api.updatePoint(update)
+          .then((response) => {
+            this._pointsModel.updatePoint(updateType, response);
+          })
+          .catch(() => {
+            this._pointPresenter[update.id].setViewState(PointPresenterViewState.ABORTING);
+          });
         break;
       case UserAction.ADD_POINT:
-        this._api.addPoint(update).then((response) => {
-          this._pointsModel.addPoint(updateType, response);
-        });
+        this._pointNewPresenter.setSaving();
+        this._api.addPoint(update)
+          .then((response) => {
+            this._pointsModel.addPoint(updateType, response);
+          })
+          .catch(() => {
+            this._pointNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_POINT:
-        this._api.deletePoint(update).then(() => {
-          // Обратите внимание, метод удаления точки на сервере
-          // ничего не возвращает. Это и верно,
-          // ведь что можно вернуть при удалении точки?
-          // Поэтому в модель мы всё также передаем update
-          this._pointsModel.deletePoint(updateType, update);
-        });
+        this._pointPresenter[update.id].setViewState(PointPresenterViewState.DELETING);
+        this._api.deleteTask(update)
+          .then(() => {
+            // Обратите внимание, метод удаления точки на сервере
+            // ничего не возвращает. Это и верно,
+            // ведь что можно вернуть при удалении точки?
+            // Поэтому в модель мы всё также передаем update
+            this._tasksModel.deleteTask(updateType, update);
+          })
+          .catch(() => {
+            this._pointPresenter[update.id].setViewState(PointPresenterViewState.ABORTING);
+          });
         break;
     }
   }

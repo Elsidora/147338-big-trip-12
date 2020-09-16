@@ -386,13 +386,13 @@ export default class PointEdit extends SmartView {
 
   static parsePointToData(data) {
     return Object.assign(
-      {},
-      data
-      {
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false
-      }
+        {},
+        data,
+        {
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        }
     );
   }
 
