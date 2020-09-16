@@ -1,4 +1,4 @@
-import PointPresenter, {State as TaskPresenterViewState} from "./point";
+import PointPresenter, {State as PointPresenterViewState} from "./point";
 import PointNewPresenter from "./point-new";
 import LoadingView from "../view/list-loading";
 import NoPointsView from "../view/no-points";

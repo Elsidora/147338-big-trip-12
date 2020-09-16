@@ -18,7 +18,7 @@ const getFullCost = (points) => {
 };
 */
 
-const createTripCostTemplate = (points) => {
+const createTripCostTemplate = () => {
   // const fullCost = getFullCost(points);
   return (
     `<p class="trip-info__cost">

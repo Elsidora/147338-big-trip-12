@@ -1,4 +1,4 @@
-import he from "he";
+// import he from "he";
 import SmartView from "./smart";
 import {TRANSFER, ACTIVITY, CITIES, OFFERSAVAILABLE} from "../const";
 import {getPointDetailsTemplate} from './point-details';
@@ -18,7 +18,7 @@ const getItemTypeTemplate = (arr, checkedType) => {
   ).join(``);
 };
 
-const createPointEditTemplate = (dataPoints, dataOffers, destination) => {
+const createPointEditTemplate = (data) => {
   const {
     id,
     type,
@@ -31,7 +31,7 @@ const createPointEditTemplate = (dataPoints, dataOffers, destination) => {
     isDisabled,
     isSaving,
     isDeleting
-  } = dataPoints;
+  } = data;
 
   const typeTitle = getTypeInOrTypeTo(type);
 
