@@ -22,7 +22,7 @@ export default class Api {
     return Promise.all([
       this.getPoints(),
       this.getOffers(),
-      this.getDestination(),
+      this.getDestinations(),
     ])
       .then((response) => {
         const [points, offers, destinations] = response;
@@ -47,10 +47,10 @@ export default class Api {
       .then((offers) => offers.slice());
   }
 
-  getDestination() {
+  getDestinations() {
     return this._load({url: `destinations`})
       .then(Api.toJSON)
-      .then((destination) => destination.slice());
+      .then((destinations) => destinations.slice());
   }
 
   updatePoint(point) {

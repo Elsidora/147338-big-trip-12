@@ -10,15 +10,15 @@ import flatpickr from "flatpickr";
 
 const types = TRANSFER.concat(ACTIVITY);
 
-const getItemTypeTemplate = (arr, checkedType) => {
+const getItemTypeTemplate = (arr, checkedType, id) => {
   return arr.map((type) => `<div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checkedType === type ? ` checked` : ``}>
-    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
+    <input id="event-type-${type}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checkedType === type ? ` checked` : ``}>
+    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${id}">${type[0].toUpperCase() + type.slice(1)}</label>
     </div>`
   ).join(``);
 };
 
-const createPointEditTemplate = (data) => {
+const createPointEditTemplate = (data, offers, destinations) => {
   const {
     id,
     type,
@@ -34,29 +34,25 @@ const createPointEditTemplate = (data) => {
   } = data;
 
   const {description, name, pictures} = data.infoDestination;
-  console.log(name);
-
   const typeTitle = getTypeInOrTypeTo(type);
 
   // const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
-  const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type, isDisabled);
-  const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type, isDisabled);
+  const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type, id);
+  const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type, id);
 
-  const cityOptions = CITIES.map((item) => `<option value="${item.name}">`).join(``);
+  const cityOptions = CITIES.map((item) => `<option value="${item}">`).join(``);
 
-  const isSubmitDisabled = (name === ``);
-
-  const getFormOffersTemplate = (additionalOptions) => {
+  const getFormOffersTemplate = () => {
 
     return additionalOptions.length
       ? `
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-            ${additionalOptions.map(({id, title, price}) => `
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}">
-              <label class="event__offer-label" for="event-offer-${id}-1">
+            ${additionalOptions.map(({title, price}) =>
+            `<div class="event__offer-selector">
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer">
+              <label class="event__offer-label" for="event-offer-${id}">
                 <span class="event__offer-title">${title}</span>
                 &plus;
                 &euro;&nbsp;<span class="event__offer-price">${price}</span>
@@ -93,7 +89,7 @@ const createPointEditTemplate = (data) => {
     `<form class="${data ? `trip-events__item` : ``}"  event  event--edit" action="#" method="post" ${(isSaving || isDeleting) ? `disabled` : ``}>
     <header class="event__header">
       <div class="event__type-wrapper">
-        <label class="event__type  event__type-btn" for="event-type-toggle-1">
+        <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
@@ -126,7 +122,7 @@ const createPointEditTemplate = (data) => {
           id="event-destination-${id}"
           type="text"
           name="event-destination"
-          value="${infoDestination.name}"
+          value="${name}"
           placeholder="Minsk"
           list="destination-list-${id}"
 

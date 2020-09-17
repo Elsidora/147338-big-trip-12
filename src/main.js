@@ -94,8 +94,8 @@ const renderControls = (renderControlsContainer) => {
 api.getData()
   .then((data) => {
     pointsModel.setPoints(UpdateType.INIT, data.points);
-    offersModel.setOffers(data.offers);
-    destinationModel.setDestination(data.destinations);
+    offersModel.setOffers(UpdateType.INIT, data.offers);
+    destinationModel.setDestination(UpdateType.INIT, data.destinations);
     renderInfo(tripMainElement, data.points);
     renderControls(tripControlsElement);
   });
