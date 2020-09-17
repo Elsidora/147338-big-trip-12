@@ -4,7 +4,7 @@ import {TRANSFER, ACTIVITY, CITIES, OFFERSAVAILABLE} from "../const";
 import {getPointDetailsTemplate} from './point-details';
 import {helpersDate} from '../utils/point';
 import {getTypeInOrTypeTo} from "../utils/helper";
-// import flatpickr from "flatpickr";
+import flatpickr from "flatpickr";
 
 // import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -33,21 +33,64 @@ const createPointEditTemplate = (data) => {
     isDeleting
   } = data;
 
-  const {name} = data.infoDestination;
+  const {description, name, pictures} = data.infoDestination;
   console.log(name);
 
   const typeTitle = getTypeInOrTypeTo(type);
 
-  const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
+  // const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
   const itemTransferTemplate = getItemTypeTemplate(TRANSFER, type, isDisabled);
   const itemActivityTemplate = getItemTypeTemplate(ACTIVITY, type, isDisabled);
 
-  const cityOptions = CITIES.map((city) => `<option value="${city}">`).join(``);
+  const cityOptions = CITIES.map((item) => `<option value="${item.name}">`).join(``);
 
   const isSubmitDisabled = (name === ``);
 
+  const getFormOffersTemplate = (additionalOptions) => {
+
+    return additionalOptions.length
+      ? `
+        <section class="event__section  event__section--offers">
+          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          <div class="event__available-offers">
+            ${additionalOptions.map(({id, title, price}) => `
+            <div class="event__offer-selector">
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}">
+              <label class="event__offer-label" for="event-offer-${id}-1">
+                <span class="event__offer-title">${title}</span>
+                &plus;
+                &euro;&nbsp;<span class="event__offer-price">${price}</span>
+              </label>
+            </div>
+          `).join(``)}
+          </div>
+        </section>`
+      : ``;
+  };
+
+  const getFormInfoTemplate = (infoDestination) => {
+    // const {description, pictures} = infoDestination;
+    return pictures.length
+      ? `
+        <section class="event__section  event__section--destination">
+          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+          <p class="event__destination-description">${description}</p>
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${pictures.map((item) => `
+                <img class="event__photo" src="${item.src}" alt="${item.description}">
+              `).join(``)}
+            </div>
+          </div>
+        </section>`
+      : ``;
+  };
+
+  const formOffers = getFormOffersTemplate(additionalOptions);
+  const formDestination = getFormInfoTemplate(infoDestination);
+
   return (
-    `<form class="${data ? `trip-events__item` : ``}"  event  event--edit" action="#" method="post">
+    `<form class="${data ? `trip-events__item` : ``}"  event  event--edit" action="#" method="post" ${(isSaving || isDeleting) ? `disabled` : ``}>
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -58,7 +101,7 @@ const createPointEditTemplate = (data) => {
           class="event__type-toggle  visually-hidden"
           id="event-type-toggle-${id}"
           type="checkbox"
-          ${isDisabled ? `disabled` : ``}
+
           >
 
         <div class="event__type-list">
@@ -86,7 +129,7 @@ const createPointEditTemplate = (data) => {
           value="${infoDestination.name}"
           placeholder="Minsk"
           list="destination-list-${id}"
-          ${isDisabled ? `disabled` : ``}
+
           >
         <datalist id="destination-list-${id}">
           ${cityOptions}
@@ -103,7 +146,7 @@ const createPointEditTemplate = (data) => {
           type="text"
           name="event-start-time"
           placeholder="${helpersDate.humanizeEventTimeFormat(dateFrom)}"
-          ${isDisabled ? `disabled` : ``}>
+          >
         &mdash;
         <label class="visually-hidden" for="event-end-time-${id}">
           To
@@ -114,7 +157,7 @@ const createPointEditTemplate = (data) => {
           type="text"
           name="event-end-time"
           placeholder="${helpersDate.humanizeEventTimeFormat(dateTo)}"
-          ${isDisabled ? `disabled` : ``}>
+          >
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -135,7 +178,7 @@ const createPointEditTemplate = (data) => {
       <button
         class="event__save-btn  btn  btn--blue"
         type="submit"
-        ${isSubmitDisabled || isDisabled ? `disabled` : ``}
+
         >${isSaving ? `Saving...` : `Save`}
       </button>
       <button
@@ -153,7 +196,7 @@ const createPointEditTemplate = (data) => {
         type="checkbox"
         name="event-favorite"
         ${isFavorite === true ? `checked` : ``}
-        ${isDisabled ? `disabled` : ``}
+
         >
       <label class="event__favorite-btn" for="event-favorite-${id}">
         <span class="visually-hidden">Add to favorite</span>
@@ -166,7 +209,10 @@ const createPointEditTemplate = (data) => {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${(additionalOptions.length || (infoDestination[`description`] && infoDestination[`pictures`].length)) ? pointDetails : ``}
+    <section class="event__details">
+      ${formOffers}
+      ${formDestination}
+    </section>
   </form>`
   );
 };
@@ -193,7 +239,7 @@ export default class PointEdit extends SmartView {
 
 
     this._setInnerHandlers();
-    // this._setDatepicker();
+    this._setDatepicker();
   }
 
   removeElement() {
@@ -220,50 +266,49 @@ export default class PointEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
-    // this._setDatepicker();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
-//   _setDatepicker() {
-//     if (this._datepickerStart || this._datepickerEnd) {
-//       this._datepickerStart.destroy();
-//       this._datepickerEnd.destroy();
-//       this._datepickerStart = null;
-//       this._datepickerEnd = null;
-//     }
-// // debugger;
-//     if (this._data) {
-//       this._datepickerStart = flatpickr(
-//           this.getElement().querySelector(`#event-start-time-1`),
-//           {
-//             enableTime: true,
-//             /* eslint-disable-next-line */
-//             time_24hr: true,
-//             altInput: true,
-//             altFormat: `d/m/y H:i`,
-//             dateFormat: `d/m/y H:i`,
-//             minDate: `today`,
-//             defaultDate: this._data.dateFrom,
-//             onChange: this._startDateChangeHandler
-//           }
-//       );
-//       this._datepickerEnd = flatpickr(
-//           this.getElement().querySelector(`#event-end-time-1`),
-//           {
-//             enableTime: true,
-//             /* eslint-disable-next-line */
-//             time_24hr: true,
-//             altInput: true,
-//             altFormat: `d/m/y H:i`,
-//             dateFormat: `d/m/y H:i`,
-//             minDate: `today`,
-//             defaultDate: this._data.dateTo,
-//             onChange: this._endDateChangeHandler
-//           }
-//       );
-//     }
-//   }
+  _setDatepicker() {
+    if (this._datepickerStart || this._datepickerEnd) {
+      this._datepickerStart.destroy();
+      this._datepickerEnd.destroy();
+      this._datepickerStart = null;
+      this._datepickerEnd = null;
+    }
+    if (this._data) {
+      this._datepickerStart = flatpickr(
+          this.getElement().querySelector(`input[name=event-start-time]`),
+          {
+            enableTime: true,
+            /* eslint-disable-next-line */
+            time_24hr: true,
+            altInput: true,
+            altFormat: `d/m/y H:i`,
+            dateFormat: `d/m/y H:i`,
+            minDate: `today`,
+            defaultDate: this._data.dateFrom,
+            onChange: this._startDateChangeHandler
+          }
+      );
+      this._datepickerEnd = flatpickr(
+          this.getElement().querySelector(`input[name=event-end-time]`),
+          {
+            enableTime: true,
+            /* eslint-disable-next-line */
+            time_24hr: true,
+            altInput: true,
+            altFormat: `d/m/y H:i`,
+            dateFormat: `d/m/y H:i`,
+            minDate: `today`,
+            defaultDate: this._data.dateTo,
+            onChange: this._endDateChangeHandler
+          }
+      );
+    }
+  }
 
   _startDateChangeHandler([userDate]) {
     if (userDate !== this._data.dateFrom) {
@@ -343,7 +388,7 @@ export default class PointEdit extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._data);
+    this._callback.formSubmit(PointEdit.parseDataToPoint(this._data));
   }
 
   _typeClickHandler(evt) {

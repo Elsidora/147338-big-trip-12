@@ -116,7 +116,7 @@ export default class Point extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
-    this._data = Point.parsePointToData(point);
+    // this._data = Point.parsePointToData(point);
     this._datepickerStart = null;
     this._datepickerEnd = null;
     this._editClickHandler = this._editClickHandler.bind(this);
@@ -125,7 +125,7 @@ export default class Point extends AbstractView {
   getTemplate() {
     return createPointTemplate(this._point);
   }
-
+/*
   _setDatepicker() {
     if (this._datepickerStart || this._datepickerEnd) {
       this._datepickerStart.destroy();
@@ -139,7 +139,7 @@ export default class Point extends AbstractView {
           {
             enableTime: true,
             /* eslint-disable-next-line */
-            time_24hr: true,
+            /*time_24hr: true,
             altInput: true,
             altFormat: `d/m/y H:i`,
             dateFormat: `d/m/y H:i`,
@@ -153,7 +153,7 @@ export default class Point extends AbstractView {
           {
             enableTime: true,
             /* eslint-disable-next-line */
-            time_24hr: true,
+            /*time_24hr: true,
             altInput: true,
             altFormat: `d/m/y H:i`,
             dateFormat: `d/m/y H:i`,
@@ -164,42 +164,17 @@ export default class Point extends AbstractView {
       );
     }
   }
+*/
 
   _editClickHandler(evt) {
     evt.preventDefault();
     this._callback.editClick();
-    this._setDatepicker();
+    // this._setDatepicker();
   }
 
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
-  }
-
-  static parsePointToData(data) {
-    return Object.assign(
-        {},
-        data,
-        {
-          isDisabled: false,
-          isSaving: false,
-          isDeleting: false
-        }
-    );
-  }
-
-  static parseDataToPoint(data) {
-    data = Object.assign({}, data);
-
-    if (data.isFavorite) {
-      data.isFavorite = true;
-    }
-
-    delete data.isDisabled;
-    delete data.isSaving;
-    delete data.isDeleting;
-
-    return data;
   }
 }
 
