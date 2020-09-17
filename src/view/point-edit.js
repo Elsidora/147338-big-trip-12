@@ -33,6 +33,9 @@ const createPointEditTemplate = (data) => {
     isDeleting
   } = data;
 
+  const {name} = data.infoDestination;
+  console.log(name);
+
   const typeTitle = getTypeInOrTypeTo(type);
 
   const pointDetails = getPointDetailsTemplate(additionalOptions, infoDestination);
