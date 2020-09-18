@@ -28,7 +28,6 @@ const createPointEditTemplate = (data, offers, destinations) => {
     dateTo,
     price,
     isFavorite,
-    isDisabled,
     isSaving,
     isDeleting
   } = data;
@@ -86,7 +85,7 @@ const createPointEditTemplate = (data, offers, destinations) => {
   const formDestination = getFormInfoTemplate(infoDestination);
 
   return (
-    `<form class="${data ? `trip-events__item` : ``}"  event  event--edit" action="#" method="post" ${(isSaving || isDeleting) ? `disabled` : ``}>
+    `<form class="${data.price ? `` : `trip-events__item`}"  event  event--edit" action="#" method="post" ${(isSaving || isDeleting) ? `disabled` : ``}>
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
@@ -167,7 +166,6 @@ const createPointEditTemplate = (data, offers, destinations) => {
           type="number"
           name="event-price"
           value="${price}"
-          ${isDisabled ? `disabled` : ``}
           required>
       </div>
 
@@ -180,14 +178,13 @@ const createPointEditTemplate = (data, offers, destinations) => {
       <button
         class="event__reset-btn"
         type="reset"
-        ${isDisabled ? `disabled` : ``}
+
         >
         ${isDeleting ? `Deleting...` : `Delete`}
-
       </button>
 
       <input
-        id="event-favorite-1"
+        id="event-favorite-${id}"
         class="event__favorite-checkbox  visually-hidden"
         type="checkbox"
         name="event-favorite"
