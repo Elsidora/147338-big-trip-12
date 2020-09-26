@@ -29,8 +29,8 @@ const getFormInfoTemplate = (infoDestination) => {
         <p class="event__destination-description">${description}</p>
         <div class="event__photos-container">
           <div class="event__photos-tape">
-            ${pictures.map((item) => `
-              <img class="event__photo" src="${item.src}" alt="${item.description}">
+            ${pictures.map((src) => `
+              <img class="event__photo" src="${src}" alt="Event photo">
             `).join(``)}
           </div>
         </div>

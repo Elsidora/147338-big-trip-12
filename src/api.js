@@ -9,7 +9,7 @@ const Method = {
 
 const SuccessHTTPStatusRange = {
   MIN: 200,
-  MAX: 300
+  MAX: 299
 };
 
 export default class Api {
@@ -18,6 +18,7 @@ export default class Api {
     this._authorization = authorization;
   }
 
+<<<<<<< HEAD
   getData() {
     return Promise.all([
       this.getPoints(),
@@ -34,11 +35,12 @@ export default class Api {
       });
   }
 
+=======
+>>>>>>> parent of 2e712ca... update
   getPoints() {
     return this._load({url: `points`})
-      .then((response) => response.json())
-      .then((points) => points.map(PointsModel.adaptToClient))
-      // .then((result) => console.log(result));
+      .then(Api.toJSON)
+      .then((points) => points.map(PointsModel.adaptToClient));
   }
 
   getOffers() {

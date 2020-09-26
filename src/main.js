@@ -27,7 +27,18 @@ const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
+/*
+api.getPoints().then((points) => {
+  console.log(points);
+  // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
+  // а ещё на сервере используется snake_case, а у нас camelCase.
+  // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
+  // Есть вариант получше - паттерн "Адаптер"
+});
+*/
+
 const pointsModel = new PointsModel();
+// pointsModel.setPoints(points);
 
 const filterModel = new FilterModel();
 
@@ -47,19 +58,19 @@ const statsContainer = mainElement.querySelector(`.page-body__container`);
 
 let statsComponent = null;
 
-const renderInfo = (renderInfoContainer, responsePoints) => {
+const renderInfo = (renderInfoContainer) => {
 
   const tripInfoComponent = new TripInfoView();
-  const tripCostComponent = new TripCostView(responsePoints);
+  const tripCostComponent = new TripCostView(api.getPoints());
 
-  if (!responsePoints.length) {
+  if (!api.getPoints().length) {
     renderElement(renderInfoContainer, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
     renderElement(tripInfoComponent.getElement(), tripCostComponent.getElement(), RenderPosition.BEFOREEND);
     return;
   }
 
-  const tripStartDate = responsePoints[0].dateFrom;
-  const tripEndDate = responsePoints[responsePoints.length - 1].dateTo;
+  const tripStartDate = api.getPoints()[0].dateFrom;
+  const tripEndDate = api.getPoints()[api.getPoints().length - 1].dateTo;
   const tripRouteComponent = new TripRouteView(tripStartDate, tripEndDate);
 
   renderElement(renderInfoContainer, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
@@ -71,7 +82,7 @@ const renderControls = (renderControlsContainer) => {
   const siteMenuComponent = new SiteMenuView();
   const filterComponent = new FilterView();
 
-  renderElement(renderControlsContainer, siteMenuComponent.getElement(), RenderPosition.AFTERBEGIN);
+  renderElement(renderControlsContainer, siteMenuComponent.getElement(), RenderPosition.BEFOREEND);
   renderElement(renderControlsContainer, filterComponent.getTitleFilterElement(), RenderPosition.BEFOREEND);
 
   const handleSiteMenuClick = (menuItem) => {
@@ -91,6 +102,7 @@ const renderControls = (renderControlsContainer) => {
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 };
 
+<<<<<<< HEAD
 api.getData()
   .then((data) => {
     pointsModel.setPoints(UpdateType.INIT, data.points);
@@ -99,8 +111,38 @@ api.getData()
     renderInfo(tripMainElement, data.points);
     renderControls(tripControlsElement);
   });
+=======
+renderInfo(tripMainElement);
+renderControls(tripControlsElement);
+filterPresenter.init();
+>>>>>>> parent of 2e712ca... update
 eventsPresenter.init();
+/*
+api.getPoints()
+  .then((points) => {
+    console.log(points);
+    pointsModel.setPoints(UpdateType.INIT, points);
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+  });
+*/
 
+api.getOffers()
+  .then((offers) => {
+    offersModel.setOffers(offers);
+
+    api.getPoints()
+      .then((points) => {
+        pointsModel.setPoints(UpdateType.INIT, points);
+      });
+
+  });
+
+api.getDestination()
+  .then((destination) => {
+    destinationModel.setDestination(destination);
+  });
 
 const handlePointNewFormClose = () => {
   document.querySelector(`.trip-main__event-add-btn`).disabled = false;

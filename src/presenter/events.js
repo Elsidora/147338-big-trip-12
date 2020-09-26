@@ -104,21 +104,27 @@ export default class Events {
         break;
       case UserAction.ADD_POINT:
         this._pointNewPresenter.setSaving();
-        this._api.addPoint(update).then((response) => {
-          this._pointsModel.addPoint(updateType, response);
-        })
+        this._api.addPoint(update)
+          .then((response) => {
+            this._pointsModel.addPoint(updateType, response);
+          })
           .catch(() => {
             this._pointNewPresenter.setAborting();
           });
         break;
       case UserAction.DELETE_POINT:
         this._pointPresenter[update.id].setViewState(PointPresenterViewState.DELETING);
-        this._api.deletePoint(update).then(() => {
-          this._pointsModel.deletePoint(updateType, update);
-        })
-        .catch(() => {
-          this._pointPresenter[update.id].setViewState(PointPresenterViewState.ABORTING);
-        });
+        this._api.deleteTask(update)
+          .then(() => {
+            // Обратите внимание, метод удаления точки на сервере
+            // ничего не возвращает. Это и верно,
+            // ведь что можно вернуть при удалении точки?
+            // Поэтому в модель мы всё также передаем update
+            this._tasksModel.deleteTask(updateType, update);
+          })
+          .catch(() => {
+            this._pointPresenter[update.id].setViewState(PointPresenterViewState.ABORTING);
+          });
         break;
     }
   }
@@ -180,7 +186,7 @@ export default class Events {
       this._arrPointPresenter = [];
     }
     remove(this._tripDaysListComponent);
-    // remove(this._sortComponent);
+    remove(this._sortComponent);
     remove(this._noPointsComponent);
     remove(this._loadingComponent);
 
@@ -191,7 +197,7 @@ export default class Events {
 
   _renderSort() {
     if (this._sortComponent !== null) {
-      return;
+      this._sortComponent = null;
     }
 
     this._sortComponent = new SortingView(this._currentSortType);

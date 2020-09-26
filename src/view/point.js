@@ -115,9 +115,14 @@ export default class Point extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
+<<<<<<< HEAD
     this._datepickerStart = null;
     this._datepickerEnd = null;
+=======
+
+>>>>>>> parent of 2e712ca... update
     this._editClickHandler = this._editClickHandler.bind(this);
+
   }
 
   getTemplate() {

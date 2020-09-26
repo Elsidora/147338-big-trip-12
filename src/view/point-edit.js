@@ -271,9 +271,16 @@ export default class PointEdit extends SmartView {
       this._datepickerStart = null;
       this._datepickerEnd = null;
     }
+<<<<<<< HEAD
     if (this._data) {
       this._datepickerStart = flatpickr(
           this.getElement().querySelector(`input[name=event-start-time]`),
+=======
+
+    if (this._data) {
+      this._datepickerStart = flatpickr(
+          this.getElement().querySelector(`#event-start-time-1`),
+>>>>>>> parent of 2e712ca... update
           {
             enableTime: true,
             /* eslint-disable-next-line */
@@ -287,7 +294,11 @@ export default class PointEdit extends SmartView {
           }
       );
       this._datepickerEnd = flatpickr(
+<<<<<<< HEAD
           this.getElement().querySelector(`input[name=event-end-time]`),
+=======
+          this.getElement().querySelector(`#event-end-time-1`),
+>>>>>>> parent of 2e712ca... update
           {
             enableTime: true,
             /* eslint-disable-next-line */
